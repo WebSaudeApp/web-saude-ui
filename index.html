@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Encontre unidades de saúde</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Início"></div>
+    <main class="wrap">
+      <section class="hero">
+        <h1>Encontre saúde de qualidade, onde você estiver.</h1>
+        <p>Hospitais, clínicas e pronto-atendimentos confiáveis, organizados pela cidade que você escolher.</p>
+        <form class="card search-bar" action="resultados.html">
+          <label class="input-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input class="input" name="q" placeholder="Hospital, clínica ou especialidade">
+          </label>
+          <select class="select" name="tipo">
+            <option value="">Tipo</option>
+            <option>Hospital</option>
+            <option>Clínica</option>
+            <option>Pronto atendimento</option>
+          </select>
+          <select class="select" name="especialidade">
+            <option value="">Especialidade</option>
+            <option>Cardiologia</option>
+            <option>Ortopedia</option>
+            <option>Pediatria</option>
+            <option>Clínica Geral</option>
+          </select>
+          <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+      </section>
+      <section>
+        <h2 class="section-title">Unidades em destaque</h2>
+        <div id="destaques" class="list"></div>
+      </section>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    WebSaude.ui.renderList({
+      target: "#destaques",
+      items: WebSaude.unidades,
+        perPage: 6,
+      noun: "unidades",
+      gridClass: "unit-grid",
+      render: function (u) { return WebSaude.ui.unitCard(u); }
+    });
+  </script>
+</body>
+</html>

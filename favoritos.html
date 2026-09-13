@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Meus favoritos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Início" data-mode="user"></div>
+    <main class="wrap account">
+      <aside class="card side">
+        <img class="avatar" src="https://i.pravatar.cc/160?img=47" alt="Maria Silva">
+        <b>Maria Silva</b>
+        <div style="color:var(--muted);font-size:.9rem">maria@email.com</div>
+        <span class="chip">Paciente</span>
+        <nav class="side-nav">
+          <a href="perfil.html">Editar perfil</a>
+          <a class="is-active" href="favoritos.html">Meus favoritos</a>
+          <a href="avaliacoes.html">Minhas avaliações</a>
+          <a href="recuperar-senha.html">Alterar senha</a>
+          <a class="btn-danger" href="index.html">Sair</a>
+        </nav>
+      </aside>
+      <section>
+        <h1 class="section-title">Meus favoritos</h1>
+        <p id="resumo" style="color:var(--muted);margin-bottom:16px"></p>
+        <div id="lista" class="list"></div>
+      </section>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!WebSaude.ui.favs().length) {
+      [1, 2, 3].forEach(function (id) {
+        if (WebSaude.ui.favs().indexOf(id) < 0) {
+          var list = WebSaude.ui.favs();
+          list.push(id);
+          localStorage.setItem("web-saude-favs", JSON.stringify(list));
+        }
+      });
+    }
+    function itens() {
+      var ids = WebSaude.ui.favs();
+      return WebSaude.unidades.filter(function (u) { return ids.indexOf(u.id) >= 0; });
+    }
+    document.getElementById("resumo").textContent = itens().length + " unidades salvas";
+    WebSaude.ui.renderList({
+      target: "#lista",
+      items: itens,
+      perPage: 3,
+      noun: "unidades",
+      empty: "Você não tem favoritos.",
+      render: function (u) { return WebSaude.ui.unitRow(u); }
+    });
+  </script>
+</body>
+</html>

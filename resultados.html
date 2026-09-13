@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Resultados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Encontrar unidades"></div>
+    <main class="wrap">
+      <div class="results-head">
+        <div>
+          <h1 id="titulo">Resultados</h1>
+          <p class="help" id="contagem" style="color:var(--muted)"></p>
+        </div>
+        <select class="select" id="ordem" style="max-width:220px">
+          <option value="relevancia">Mais próximo</option>
+          <option value="avaliacao">Melhor avaliação</option>
+          <option value="recentes">Recentes</option>
+        </select>
+      </div>
+      <div class="results-layout">
+        <aside class="card filters">
+          <h3>Filtros avançados <button type="button" id="limpar">Limpar</button></h3>
+          <label class="check"><input type="checkbox" name="aberto" checked> Aberto agora</label>
+          <label class="check"><input type="checkbox" name="convenio" checked> Atende convênio</label>
+          <label class="check"><input type="checkbox" name="urgencia"> Urgência 24h</label>
+          <label class="check"><input type="checkbox" name="estacionamento"> Tem estacionamento</label>
+          <label class="check"><input type="checkbox" name="pcd"> Acessível PCD</label>
+          <div class="filter-group">
+            <span class="label">Faixa de preço</span>
+            <select class="select" name="preco"><option>Particular</option><option>Convênio</option></select>
+          </div>
+          <div class="filter-group">
+            <span class="label">Horário de funcionamento</span>
+            <select class="select"><option>Qualquer horário</option><option>24 horas</option></select>
+          </div>
+          <div class="filter-group">
+            <span class="label">Distância</span>
+            <select class="select"><option>Até 5 km</option><option>Até 10 km</option></select>
+          </div>
+          <div class="filter-group">
+            <span class="label">Avaliação mínima</span>
+            <select class="select" id="notaMin">
+              <option value="0">Todas</option>
+              <option value="4" selected>4+ estrelas</option>
+              <option value="4.5">4,5+ estrelas</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-lg" type="button" id="aplicar">Aplicar filtros</button>
+        </aside>
+        <div>
+          <div id="lista" class="list"></div>
+        </div>
+      </div>
+      <form class="search-dock" action="resultados.html">
+        <input class="input" name="q" placeholder="Hospital, clínica ou especialidade">
+        <select class="select" name="cidade">
+          <option>São Paulo (SP)</option>
+          <option>Rio de Janeiro (RJ)</option>
+          <option>Belo Horizonte (MG)</option>
+          <option>Brasília (DF)</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Buscar</button>
+      </form>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    var p = WebSaude.ui.params();
+    var cidade = p.get("cidade") || "São Paulo";
+    var q = (p.get("q") || "").toLowerCase();
+    document.getElementById("titulo").textContent = "Resultados em " + cidade + (cidade.indexOf("(") >= 0 ? "" : " (SP)");
+    function filtrar() {
+      var min = Number(document.getElementById("notaMin").value);
+      var ordem = document.getElementById("ordem").value;
+      var lista = WebSaude.unidades.filter(function (u) {
+        var cidadeOk = !cidade || u.cidade.toLowerCase().indexOf(cidade.toLowerCase().split(" ")[0]) >= 0 || cidade.indexOf(u.cidade) >= 0;
+        var buscaOk = !q || (u.nome + u.tipo + u.especialidades.join(" ")).toLowerCase().indexOf(q) >= 0;
+        return cidadeOk && buscaOk && u.nota >= min;
+      });
+      if (ordem === "avaliacao") lista = lista.slice().sort(function (a, b) { return b.nota - a.nota; });
+      document.getElementById("contagem").textContent = lista.length + " unidades encontradas · Busca filtrada pela cidade";
+      return lista;
+    }
+    var view = WebSaude.ui.renderList({
+      target: "#lista",
+      items: filtrar,
+      perPage: 3,
+      noun: "unidades",
+      empty: "Nenhuma unidade encontrada.",
+      render: function (u) { return WebSaude.ui.unitRow(u); }
+    });
+    document.getElementById("aplicar").onclick = view.refresh;
+    document.getElementById("ordem").onchange = view.refresh;
+    document.getElementById("limpar").onclick = function () {
+      document.querySelectorAll(".filters input[type=checkbox]").forEach(function (c) { c.checked = false; });
+      document.getElementById("notaMin").value = "0";
+      view.refresh();
+    };
+  </script>
+</body>
+</html>

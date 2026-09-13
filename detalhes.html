@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Detalhes da unidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Encontrar unidades"></div>
+    <main class="wrap details" id="detalhe"></main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    var id = Number(WebSaude.ui.params().get("id") || 1);
+    var u = WebSaude.unidades.find(function (x) { return x.id === id; }) || WebSaude.unidades[0];
+    var fotos = [u.foto, WebSaude.unidades[1].foto, WebSaude.unidades[2].foto, WebSaude.unidades[3].foto];
+    document.title = "Web Saúde — " + u.nome;
+    document.getElementById("detalhe").innerHTML =
+      '<div class="details-title"><h1>' + u.nome + '</h1><span class="chip">' + u.tipo + '</span>' +
+      '<span class="chip chip-ok">' + (u.aberto ? "Aberto agora" : u.horario) + "</span>" +
+      '<button class="btn btn-ghost" data-fav="' + u.id + '" type="button">♥ Favoritar</button>' +
+      '<button class="btn btn-ghost" type="button" id="share">Compartilhar</button></div>' +
+      '<div class="gallery"><div><img class="gallery-main" id="foto" src="' + u.foto + '" alt="' + u.nome + '">' +
+      '<div class="thumbs">' + fotos.map(function (f, i) { return '<img src="' + f + '" data-src="' + f + '"' + (i === 0 ? ' class="is-on"' : "") + '>'; }).join("") + "</div></div>" +
+      '<div class="info-grid">' +
+      '<div class="card info-card"><div>' + u.endereco + ", " + u.cidade + "</div><div>☎ " + u.telefone + "</div><div>✉ " + u.email + "</div></div>" +
+      '<div class="card info-card"><b>Especialidades</b><div class="spec-grid">' + u.especialidades.map(function (s) { return '<span class="chip">' + s + "</span>"; }).join("") + "</div></div>" +
+      '<div class="card info-card"><b>Horários</b><div>Segunda a domingo: 08:00 – 22:00</div><div class="chip chip-ok">' + u.horario + "</div></div>" +
+      "</div></div>" +
+      '<section class="card info-card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
+      "<div><b>Avaliações</b><div style=\"font-size:2rem\">" + u.nota.toFixed(1) + "</div><div>" + u.avaliacoes + " avaliações</div></div>" +
+      '<a class="btn btn-primary" href="login.html">Deixar avaliação</a></div>' +
+      WebSaude.avaliacoes.map(function (a) {
+        return '<article class="review"><img class="avatar" src="' + a.foto + '" alt=""><div><b>' + a.nome + "</b><div>" + WebSaude.ui.stars(a.nota) + "</div><p>" + a.texto + "</p></div><span>" + a.data + "</span></article>";
+      }).join("") + "</section>";
+    WebSaude.ui.bindFavs(document.getElementById("detalhe"));
+    document.querySelector(".thumbs").addEventListener("click", function (e) {
+      if (!e.target.dataset.src) return;
+      document.getElementById("foto").src = e.target.dataset.src;
+      document.querySelectorAll(".thumbs img").forEach(function (img) { img.classList.toggle("is-on", img === e.target); });
+    });
+    document.getElementById("share").onclick = function () {
+      navigator.clipboard.writeText(location.href);
+      WebSaude.ui.toast("Link copiado.");
+    };
+  </script>
+</body>
+</html>

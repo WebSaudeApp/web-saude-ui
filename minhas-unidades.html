@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Minhas unidades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Início" data-mode="gestor"></div>
+    <main class="wrap" style="padding:28px 0 48px">
+      <div class="toolbar">
+        <h1>Minhas unidades</h1>
+        <a class="btn btn-primary" href="cadastro-unidade.html">Adicionar nova unidade</a>
+      </div>
+      <div class="toolbar" style="margin:16px 0">
+        <select class="select" id="status" style="max-width:180px">
+          <option value="">Todos os status</option>
+          <option>Publicado</option>
+          <option>Rascunho</option>
+        </select>
+        <select class="select" id="aprovacao" style="max-width:180px">
+          <option value="">Todas as aprovações</option>
+          <option>Aprovado</option>
+          <option>Pendente</option>
+        </select>
+        <input class="input" id="busca" placeholder="Buscar unidade">
+      </div>
+      <div class="card table-wrap" id="tabela"></div>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    function itens() {
+      var s = document.getElementById("status").value;
+      var a = document.getElementById("aprovacao").value;
+      var q = document.getElementById("busca").value.toLowerCase();
+      return WebSaude.unidades.filter(function (u) {
+        return (!s || u.status === s) && (!a || u.aprovacao === a) && (!q || u.nome.toLowerCase().indexOf(q) >= 0);
+      });
+    }
+    var view = WebSaude.ui.renderList({
+      target: "#tabela",
+      items: itens,
+      perPage: 3,
+      noun: "unidades",
+      render: function (u) {
+        var st = u.status === "Publicado" ? "chip-ok" : "chip-muted";
+        var ap = u.aprovacao === "Aprovado" ? "chip-ok" : "chip-warn";
+        return '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.2fr;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center">' +
+          "<div><b>" + u.nome + "</b></div><div>" + u.tipo + "</div>" +
+          '<div><span class="chip ' + st + '">' + u.status + "</span></div>" +
+          '<div><span class="chip ' + ap + '">' + u.aprovacao + "</span></div>" +
+          '<div class="row-actions"><a href="cadastro-unidade.html">Editar</a><a href="detalhes.html?id=' + u.id + '">Ver</a><button class="danger" type="button">Deletar</button></div></div>';
+      }
+    });
+    document.getElementById("status").onchange = view.refresh;
+    document.getElementById("aprovacao").onchange = view.refresh;
+    document.getElementById("busca").oninput = view.refresh;
+  </script>
+</body>
+</html>

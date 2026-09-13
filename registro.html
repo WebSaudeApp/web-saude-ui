@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Criar conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-split">
+      <div class="auth-art">
+        <div data-brand></div>
+        <h2>Comece a cuidar da sua saúde</h2>
+        <div class="illu" aria-hidden="true"></div>
+      </div>
+      <form class="card auth-card" id="form">
+        <div data-brand></div>
+        <h1>Criar conta</h1>
+        <div class="tabs">
+          <button type="button" class="is-on" data-tab="paciente" data-tab-group="tipo">Sou Paciente</button>
+          <button type="button" data-tab="gestor" data-tab-group="tipo">Sou Gestor de Unidade</button>
+        </div>
+        <input type="hidden" name="tipo" id="tipo" value="paciente">
+        <label class="field"><span>Nome</span><input class="input" name="nome" required></label>
+        <label class="field"><span>E-mail</span><input class="input" type="email" name="email" required></label>
+        <label class="field"><span>Telefone</span><input class="input" name="telefone" placeholder="(11) 98765-4321" required></label>
+        <label class="field"><span>Senha</span><input class="input" type="password" name="senha" minlength="6" required></label>
+        <label class="field"><span>Confirmar senha</span><input class="input" type="password" name="confirma" required></label>
+        <label class="check"><input type="checkbox" name="termos" required> Aceito os Termos de uso e a Política de privacidade</label>
+        <button class="btn btn-primary btn-lg" type="submit">Criar conta</button>
+        <p class="center-note">Já tenho conta · <a href="login.html">Entrar</a></p>
+      </form>
+    </div>
+  </div>
+  <div class="toast"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.querySelectorAll("[data-brand]").forEach(function (el) { el.outerHTML = WebSaude.ui.brand("index.html"); });
+    document.querySelectorAll("[data-tab]").forEach(function (b) {
+      b.addEventListener("click", function () { document.getElementById("tipo").value = b.getAttribute("data-tab"); });
+    });
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (this.senha.value !== this.confirma.value) {
+        WebSaude.ui.toast("As senhas não coincidem.");
+        return;
+      }
+      location.href = "verificar-email.html?email=" + encodeURIComponent(this.email.value);
+    });
+  </script>
+</body>
+</html>

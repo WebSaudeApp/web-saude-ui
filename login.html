@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Entrar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-split">
+      <div class="auth-art">
+        <div data-brand></div>
+        <h2>Cuidado mais perto de você</h2>
+        <div class="illu" aria-hidden="true"></div>
+      </div>
+      <form class="card auth-card" id="form">
+        <div data-brand></div>
+        <h1>Entrar na sua conta</h1>
+        <p class="sub">Acesse para favoritar e avaliar unidades</p>
+        <label class="field"><span>E-mail</span><input class="input" type="email" name="email" placeholder="seu@email.com" required></label>
+        <label class="field"><span>Senha</span><input class="input" type="password" name="senha" required></label>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <label class="check"><input type="checkbox" name="lembrar"> Lembrar-me</label>
+          <a href="recuperar-senha.html">Esqueceu a senha?</a>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit">Entrar</button>
+        <p class="center-note">Não tem conta? <a href="registro.html">Criar conta</a></p>
+      </form>
+    </div>
+  </div>
+  <div class="toast"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.querySelectorAll("[data-brand]").forEach(function (el) { el.outerHTML = WebSaude.ui.brand("index.html"); });
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = this.email.value.toLowerCase();
+      if (email.indexOf("admin") >= 0) location.href = "admin.html";
+      else if (email.indexOf("gestor") >= 0) location.href = "minhas-unidades.html";
+      else location.href = "perfil.html";
+    });
+  </script>
+</body>
+</html>

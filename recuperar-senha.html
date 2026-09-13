@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Recuperar senha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <form class="card auth-card" id="form" style="max-width:440px;width:100%">
+      <div data-brand></div>
+      <h1 id="titulo">Recuperar senha</h1>
+      <p class="sub" id="sub">Informe o e-mail da sua conta para enviarmos o link de redefinição.</p>
+      <div id="etapa1">
+        <label class="field"><span>E-mail</span><input class="input" type="email" name="email" required></label>
+        <button class="btn btn-primary btn-lg" type="submit">Enviar</button>
+      </div>
+      <div id="etapa2" hidden>
+        <label class="field"><span>Nova senha</span><input class="input" type="password" name="senha" minlength="6"></label>
+        <label class="field"><span>Confirmar senha</span><input class="input" type="password" name="confirma"></label>
+        <button class="btn btn-primary btn-lg" type="submit">Resetar senha</button>
+      </div>
+      <p class="center-note" id="passo">Etapa 1 de 2</p>
+      <p class="center-note"><a href="login.html">Voltar ao login</a></p>
+    </form>
+  </div>
+  <div class="toast"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.querySelectorAll("[data-brand]").forEach(function (el) { el.outerHTML = WebSaude.ui.brand("index.html"); });
+    var etapa = 1;
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (etapa === 1) {
+        etapa = 2;
+        document.getElementById("etapa1").hidden = true;
+        document.getElementById("etapa2").hidden = false;
+        document.getElementById("titulo").textContent = "Nova senha";
+        document.getElementById("sub").textContent = "Crie uma senha nova para a sua conta.";
+        document.getElementById("passo").textContent = "Etapa 2 de 2";
+        this.senha.required = true;
+        return;
+      }
+      if (this.senha.value !== this.confirma.value) {
+        WebSaude.ui.toast("As senhas não coincidem.");
+        return;
+      }
+      WebSaude.ui.toast("Senha redefinida com sucesso.");
+      setTimeout(function () { location.href = "login.html"; }, 900);
+    });
+  </script>
+</body>
+</html>

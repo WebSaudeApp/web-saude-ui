@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Verificar e-mail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <form class="card auth-card" id="form" style="max-width:440px;width:100%">
+      <div data-brand></div>
+      <h1>Verifique seu e-mail</h1>
+      <p class="sub" id="msg">Enviamos um código de 6 dígitos. Digite o código para confirmar sua conta.</p>
+      <div class="otp">
+        <input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric">
+        <input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric">
+      </div>
+      <button class="btn btn-primary btn-lg" type="submit">Verificar</button>
+      <p class="center-note"><button type="button" id="reenviar">Reenviar código</button></p>
+      <p class="center-note">O código expira em <span id="timer">09:42</span></p>
+    </form>
+  </div>
+  <div class="toast"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.querySelectorAll("[data-brand]").forEach(function (el) { el.outerHTML = WebSaude.ui.brand("index.html"); });
+    var email = WebSaude.ui.params().get("email");
+    if (email) document.getElementById("msg").textContent = "Enviamos um código de 6 dígitos para " + email + ".";
+    var inputs = Array.prototype.slice.call(document.querySelectorAll(".otp input"));
+    inputs.forEach(function (input, i) {
+      input.addEventListener("input", function () {
+        input.value = input.value.replace(/\D/g, "").slice(0, 1);
+        if (input.value && inputs[i + 1]) inputs[i + 1].focus();
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Backspace" && !input.value && inputs[i - 1]) inputs[i - 1].focus();
+      });
+    });
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      location.href = "perfil.html";
+    });
+    document.getElementById("reenviar").onclick = function () { WebSaude.ui.toast("Novo código enviado."); };
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Escolha sua cidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Como funciona"></div>
+    <main class="wrap">
+      <section class="city-hero">
+        <div>
+          <span class="badge">Cuidado perto de você</span>
+          <h1 style="margin-top:18px;font-size:clamp(2rem,4vw,2.7rem);letter-spacing:-.03em">Encontre saúde de qualidade, onde você estiver.</h1>
+          <p style="color:var(--muted);margin-top:12px;max-width:48ch">Hospitais, clínicas e pronto-atendimentos confiáveis, organizados pela cidade que você escolher.</p>
+          <div class="benefits">
+            <span>✓ Unidades verificadas</span>
+            <span>✓ Busca personalizada</span>
+            <span>✓ Informação clara</span>
+          </div>
+        </div>
+        <aside class="card city-card">
+          <h2>Qual cidade você procura?</h2>
+          <p class="help">Mostre opções relevantes na sua região.</p>
+          <label class="input-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input class="input" id="cidade" placeholder="Digite a cidade...">
+          </label>
+          <div class="suggest" id="sugestoes"></div>
+          <button class="btn btn-primary btn-lg" id="localizacao" type="button">Usar minha localização</button>
+          <p class="help" style="margin-top:18px">Cidades populares</p>
+          <div class="popular" id="populares"></div>
+        </aside>
+      </section>
+      <section class="steps">
+        <h2>Seu cuidado começa com uma escolha simples</h2>
+        <div class="step-grid">
+          <article class="card step"><span>1</span><b>Escolha sua cidade</b><p>Use a busca ou permita sua localização.</p></article>
+          <article class="card step"><span>2</span><b>Compare unidades</b><p>Veja avaliações, horários e convênios.</p></article>
+          <article class="card step"><span>3</span><b>Cuide de você</b><p>Escolha a melhor opção para o momento.</p></article>
+        </div>
+      </section>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    var cidades = ["São Paulo, SP", "São Paulo do Potengi, RN", "São Paulo de Olivença, AM", "Rio de Janeiro, RJ", "Belo Horizonte, MG", "Brasília, DF"];
+    var box = document.getElementById("sugestoes");
+    var input = document.getElementById("cidade");
+    function ir(c) { location.href = "resultados.html?cidade=" + encodeURIComponent(c.split(",")[0]); }
+    function pintar(lista) {
+      box.innerHTML = lista.slice(0, 3).map(function (c) {
+        return '<button type="button" data-city="' + c + '">📍 ' + c + "</button>";
+      }).join("");
+    }
+    pintar(cidades);
+    input.addEventListener("input", function () {
+      var q = input.value.toLowerCase();
+      pintar(cidades.filter(function (c) { return c.toLowerCase().indexOf(q) >= 0; }));
+    });
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-city]");
+      if (b) ir(b.getAttribute("data-city"));
+    });
+    document.getElementById("populares").innerHTML = ["São Paulo (SP)", "Rio de Janeiro (RJ)", "Belo Horizonte (MG)", "Brasília (DF)"].map(function (c) {
+      return '<button type="button" data-pop="' + c + '">' + c + "</button>";
+    }).join("");
+    document.getElementById("populares").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pop]");
+      if (b) ir(b.getAttribute("data-pop"));
+    });
+    document.getElementById("localizacao").addEventListener("click", function () { ir("São Paulo, SP"); });
+  </script>
+</body>
+</html>

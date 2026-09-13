@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Saúde — Cadastrar unidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div data-header="Início" data-mode="gestor"></div>
+    <main class="wrap" style="padding:28px 0 48px">
+      <h1 style="margin-bottom:16px">Cadastrar nova unidade</h1>
+      <div class="tabs" style="margin-bottom:16px">
+        <button type="button" class="is-on" data-tab="info" data-tab-group="cad">Informações</button>
+        <button type="button" data-tab="end" data-tab-group="cad">Endereço</button>
+        <button type="button" data-tab="esp" data-tab-group="cad">Especialidades</button>
+        <button type="button" data-tab="hor" data-tab-group="cad">Horários</button>
+        <button type="button" data-tab="fotos" data-tab-group="cad">Fotos</button>
+      </div>
+      <form id="form" class="list">
+        <section class="card panel" data-panel="info" data-panel-group="cad">
+          <h2>Informações</h2>
+          <label class="field"><span>Nome da unidade</span><input class="input" name="nome" required></label>
+          <div class="check" style="gap:18px">
+            <span class="label">Tipo</span>
+            <label class="check"><input type="radio" name="tipo" value="Clinica"> Clínica</label>
+            <label class="check"><input type="radio" name="tipo" value="Hospital" checked> Hospital</label>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label class="field"><span>E-mail</span><input class="input" type="email" name="email"></label>
+            <label class="field"><span>WhatsApp</span><input class="input" name="whatsapp"></label>
+          </div>
+          <label class="field"><span>Descrição</span><textarea class="textarea" name="descricao"></textarea></label>
+        </section>
+        <section class="card panel is-hidden" data-panel="end" data-panel-group="cad" hidden>
+          <h2>Endereço</h2>
+          <label class="field"><span>Rua</span><input class="input" name="rua"></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <label class="field"><span>Número</span><input class="input" name="numero"></label>
+            <label class="field"><span>Cidade</span><input class="input" name="cidade"></label>
+            <label class="field"><span>CEP</span><input class="input" name="cep"></label>
+          </div>
+        </section>
+        <section class="card panel is-hidden" data-panel="esp" data-panel-group="cad" hidden>
+          <h2>Especialidades</h2>
+          <label class="check"><input type="checkbox" checked> Cardiologia</label>
+          <label class="check"><input type="checkbox" checked> Pediatria</label>
+          <label class="check"><input type="checkbox"> Ortopedia</label>
+          <label class="field"><span>Especialidade customizada</span><input class="input" name="custom"></label>
+        </section>
+        <section class="card panel is-hidden" data-panel="hor" data-panel-group="cad" hidden>
+          <h2>Horários</h2>
+          <p>Segunda a sexta · 08:00 – 18:00</p>
+          <label class="check"><input type="checkbox" checked> Ativo</label>
+        </section>
+        <section class="card panel is-hidden" data-panel="fotos" data-panel-group="cad" hidden>
+          <h2>Fotos</h2>
+          <input class="input" type="file" multiple>
+          <p class="help" style="color:var(--muted)">Arraste arquivos ou selecione. A primeira foto será a principal.</p>
+        </section>
+        <div class="form-actions">
+          <a class="btn btn-ghost" href="minhas-unidades.html">Cancelar</a>
+          <button class="btn btn-ghost" type="button" id="rascunho">Salvar como rascunho</button>
+          <button class="btn btn-primary" type="submit">Enviar para aprovação</button>
+        </div>
+      </form>
+    </main>
+    <div data-footer></div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      WebSaude.ui.toast("Unidade enviada para aprovação.");
+      setTimeout(function () { location.href = "minhas-unidades.html"; }, 800);
+    });
+    document.getElementById("rascunho").onclick = function () { WebSaude.ui.toast("Rascunho salvo."); };
+  </script>
+</body>
+</html>
