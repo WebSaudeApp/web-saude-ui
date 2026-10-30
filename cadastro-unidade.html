@@ -9,63 +9,127 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="page">
-    <div data-header="Início" data-mode="gestor"></div>
-    <main class="wrap" style="padding:28px 0 48px">
-      <h1 style="margin-bottom:16px">Cadastrar nova unidade</h1>
-      <div class="tabs" style="margin-bottom:16px">
-        <button type="button" class="is-on" data-tab="info" data-tab-group="cad">Informações</button>
-        <button type="button" data-tab="end" data-tab-group="cad">Endereço</button>
-        <button type="button" data-tab="esp" data-tab-group="cad">Especialidades</button>
-        <button type="button" data-tab="hor" data-tab-group="cad">Horários</button>
-        <button type="button" data-tab="fotos" data-tab-group="cad">Fotos</button>
+    <div data-header="Minhas unidades" data-mode="gestor"></div>
+    <main id="conteudo" class="wrap gestor">
+      <div class="unit-form-head">
+        <a class="det-back" href="minhas-unidades.html">← Minhas unidades</a>
+        <p class="admin-kicker">Gestor de unidades</p>
+        <h1 id="page-title">Cadastrar nova unidade</h1>
+        <p class="gestor-lead">Use <strong>Próximo</strong> até o último passo. Só então envie para aprovação.</p>
       </div>
-      <form id="form" class="list">
-        <section class="card panel" data-panel="info" data-panel-group="cad">
-          <h2>Informações</h2>
-          <label class="field"><span>Nome da unidade</span><input class="input" name="nome" required></label>
-          <div class="check" style="gap:18px">
-            <span class="label">Tipo</span>
-            <label class="check"><input type="radio" name="tipo" value="Clinica"> Clínica</label>
-            <label class="check"><input type="radio" name="tipo" value="Hospital" checked> Hospital</label>
+      <div class="callout" id="banner" hidden></div>
+      <ol class="stepper" id="stepper" aria-label="Passos do cadastro"></ol>
+      <form id="form" class="unit-form">
+        <section class="card panel unit-block" id="sec-info" data-step="0">
+          <header class="unit-block-head">
+            <span class="how-num">1</span>
+            <div>
+              <h2>Informações</h2>
+              <p>Nome, tipo e telefone da unidade.</p>
+            </div>
+          </header>
+          <label class="field"><span>Nome da unidade</span><input class="input" name="nome" required maxlength="80" placeholder="Ex.: Clínica Jardim Saúde"></label>
+          <p class="field-error" id="nome-error" hidden>Informe o nome da unidade.</p>
+          <fieldset class="tipo-pills">
+            <legend>Tipo</legend>
+            <label><input type="radio" name="tipo" value="Clínica"><span>Clínica</span></label>
+            <label><input type="radio" name="tipo" value="Hospital" checked><span>Hospital</span></label>
+          </fieldset>
+          <div class="form-grid-2">
+            <label class="field"><span>E-mail</span><input class="input" type="email" name="email" placeholder="contato@unidade.com.br"></label>
+            <label class="field"><span>Telefone</span><input class="input" name="telefone" inputmode="tel" placeholder="(11) 3456-7890"></label>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <label class="field"><span>E-mail</span><input class="input" type="email" name="email"></label>
-            <label class="field"><span>WhatsApp</span><input class="input" name="whatsapp"></label>
-          </div>
-          <label class="field"><span>Descrição</span><textarea class="textarea" name="descricao"></textarea></label>
+          <label class="field"><span>Descrição</span><textarea class="textarea" name="descricao" placeholder="O que o paciente encontra aqui"></textarea></label>
         </section>
-        <section class="card panel is-hidden" data-panel="end" data-panel-group="cad" hidden>
-          <h2>Endereço</h2>
-          <label class="field"><span>Rua</span><input class="input" name="rua"></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+
+        <section class="card panel unit-block" id="sec-end" data-step="1" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">2</span>
+            <div>
+              <h2>Endereço</h2>
+              <p>Onde a unidade aparece na busca e no mapa.</p>
+            </div>
+          </header>
+          <label class="field"><span>Rua</span><input class="input" name="rua" placeholder="Nome da rua"></label>
+          <div class="form-grid-3">
             <label class="field"><span>Número</span><input class="input" name="numero"></label>
+            <label class="field"><span>Complemento</span><input class="input" name="complemento"></label>
+            <label class="field"><span>CEP</span><input class="input" name="cep" inputmode="numeric" placeholder="00000-000"></label>
+          </div>
+          <div class="form-grid-2">
             <label class="field"><span>Cidade</span><input class="input" name="cidade"></label>
-            <label class="field"><span>CEP</span><input class="input" name="cep"></label>
+            <label class="field"><span>Estado</span>
+              <select class="select" name="estado">
+                <option value="">Selecione</option>
+              </select>
+            </label>
           </div>
         </section>
-        <section class="card panel is-hidden" data-panel="esp" data-panel-group="cad" hidden>
-          <h2>Especialidades</h2>
-          <label class="check"><input type="checkbox" checked> Cardiologia</label>
-          <label class="check"><input type="checkbox" checked> Pediatria</label>
-          <label class="check"><input type="checkbox"> Ortopedia</label>
-          <label class="field"><span>Especialidade customizada</span><input class="input" name="custom"></label>
+
+        <section class="card panel unit-block" id="sec-esp" data-step="2" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">3</span>
+            <div>
+              <h2>Especialidades</h2>
+              <p>Marque as que a unidade atende.</p>
+            </div>
+          </header>
+          <div id="lista-esp" class="esp-pills"></div>
+          <div class="esp-add">
+            <label class="field"><span>Outra especialidade</span><input class="input" id="esp-custom" placeholder="Ex.: Fisioterapia"></label>
+            <button class="btn btn-ghost" type="button" id="add-esp">Adicionar</button>
+          </div>
         </section>
-        <section class="card panel is-hidden" data-panel="hor" data-panel-group="cad" hidden>
-          <h2>Horários</h2>
-          <p>Segunda a sexta · 08:00 – 18:00</p>
-          <label class="check"><input type="checkbox" checked> Ativo</label>
+
+        <section class="card panel unit-block" id="sec-hor" data-step="3" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">4</span>
+            <div>
+              <h2>Horários</h2>
+              <p>Ative o dia e defina abertura e fechamento.</p>
+            </div>
+          </header>
+          <div class="hours-table" id="lista-hor"></div>
         </section>
-        <section class="card panel is-hidden" data-panel="fotos" data-panel-group="cad" hidden>
-          <h2>Fotos</h2>
-          <input class="input" type="file" multiple>
-          <p class="help" style="color:var(--muted)">Arraste arquivos ou selecione. A primeira foto será a principal.</p>
+
+        <section class="card panel unit-block" id="sec-fotos" data-step="4" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">5</span>
+            <div>
+              <h2>Fotos</h2>
+              <p>A foto de perfil é a capa da unidade. Em seguida adicione várias fotos da galeria.</p>
+            </div>
+          </header>
+
+          <div class="photo-perfil">
+            <h3>Foto de perfil</h3>
+            <p class="help">Essa imagem aparece na busca e no topo da página da unidade.</p>
+            <div class="photo-perfil-row">
+              <div class="photo-perfil-preview" id="perfil-preview">
+                <span>Sem foto de perfil</span>
+              </div>
+              <label class="btn btn-primary photo-btn">
+                <input id="perfil-input" type="file" accept="image/*">
+                <span id="perfil-btn-label">Escolher foto de perfil</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="photo-galeria">
+            <h3>Galeria da unidade</h3>
+            <p class="help">Ambiente, recepção, consultórios. Dá para enviar várias de uma vez.</p>
+            <label class="btn btn-ghost photo-btn">
+              <input id="galeria-input" type="file" accept="image/*" multiple>
+              <span>Adicionar fotos</span>
+            </label>
+            <div class="photo-grid" id="fotos-grid"></div>
+            <p class="help" id="galeria-vazia">Nenhuma foto na galeria ainda.</p>
+          </div>
         </section>
-        <div class="form-actions">
-          <a class="btn btn-ghost" href="minhas-unidades.html">Cancelar</a>
-          <button class="btn btn-ghost" type="button" id="rascunho">Salvar como rascunho</button>
-          <button class="btn btn-primary" type="submit">Enviar para aprovação</button>
-        </div>
+
+        <div class="form-actions unit-form-actions" id="acoes"></div>
       </form>
     </main>
     <div data-footer></div>
@@ -73,12 +137,389 @@
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
+    var STEPS = ["sec-info", "sec-end", "sec-esp", "sec-hor", "sec-fotos"];
+    var STEP_LABELS = ["Informações", "Endereço", "Especialidades", "Horários", "Fotos"];
+    var passo = 0;
+    var params = WebSaude.ui.params();
+    var editId = Number(params.get("id") || 0);
+    var unidade = editId
+      ? WebSaude.unidades.filter(function (u) { return u.id === editId; })[0]
+      : null;
+    var perfil = null;
+    var galeria = [];
+    var horarios = WebSaude.horariosPadrao();
+    var especialidades = [];
+    var customEsp = [];
+    var locked = false;
+
+    if (editId && !unidade) {
+      bloquear("Unidade não encontrada", "Essa unidade não existe ou foi removida.");
+    } else if (unidade && unidade.gestor !== WebSaude.GESTOR_ATUAL) {
+      bloquear("Acesso negado", "Você só administra as unidades desta conta. Esta unidade pertence a outro gestor.");
+    } else {
+      iniciar();
+    }
+
+    function bloquear(titulo, texto) {
+      document.getElementById("page-title").textContent = titulo;
+      document.getElementById("form").hidden = true;
+      document.getElementById("stepper").hidden = true;
+      var ban = document.getElementById("banner");
+      ban.hidden = false;
+      ban.className = "callout callout-warn";
+      ban.textContent = texto;
+    }
+
+    function iniciar() {
+      var sel = document.querySelector('select[name="estado"]');
+      WebSaude.ESTADOS.forEach(function (uf) {
+        sel.appendChild(new Option(uf, uf));
+      });
+      if (unidade) {
+        document.getElementById("page-title").textContent = "Editar " + unidade.nome;
+        document.title = "Web Saúde — Editar unidade";
+        fill();
+      }
+      renderEsp();
+      renderHor();
+      renderFotos();
+      renderBanner();
+      irPara(0);
+      setLocked(locked);
+    }
+
+    function fill() {
+      var form = document.getElementById("form");
+      form.nome.value = unidade.nome || "";
+      form.email.value = unidade.email || "";
+      form.telefone.value = unidade.telefone || unidade.whatsapp || "";
+      form.descricao.value = unidade.descricao || "";
+      form.rua.value = unidade.rua || "";
+      form.numero.value = unidade.numero || "";
+      form.complemento.value = unidade.complemento || "";
+      form.cep.value = unidade.cep || "";
+      form.cidade.value = unidade.cidade || "";
+      form.estado.value = unidade.estado || "";
+      var tipo = /cl[ií]nica/i.test(unidade.tipo || "") ? "Clínica" : "Hospital";
+      var radio = form.querySelector('input[name="tipo"][value="' + tipo + '"]');
+      if (radio) radio.checked = true;
+      especialidades = (unidade.especialidades || []).slice();
+      customEsp = especialidades.filter(function (s) { return WebSaude.ESPECIALIDADES.indexOf(s) < 0; });
+      horarios = (unidade.horarios && unidade.horarios.length) ? unidade.horarios.map(function (h) { return Object.assign({}, h); }) : WebSaude.horariosPadrao();
+      var urls = unidade.fotos && unidade.fotos.length ? unidade.fotos : (unidade.foto ? [unidade.foto] : []);
+      if (urls[0]) perfil = { id: "perfil", url: urls[0] };
+      galeria = urls.slice(1).map(function (url, i) { return { id: "gal-" + i, url: url }; });
+      locked = WebSaude.situacaoUnidade(unidade) === "Pendente";
+    }
+
+    function irPara(n) {
+      passo = Math.max(0, Math.min(STEPS.length - 1, n));
+      STEPS.forEach(function (id, i) {
+        document.getElementById(id).hidden = i !== passo;
+      });
+      document.getElementById("stepper").innerHTML = STEP_LABELS.map(function (label, i) {
+        var cls = i === passo ? " is-on" : (i < passo ? " is-done" : "");
+        return '<li class="stepper-item' + cls + '"><span>' + (i + 1) + "</span> " + label + "</li>";
+      }).join("");
+      renderAcoes();
+      document.getElementById("conteudo").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderBanner() {
+      var ban = document.getElementById("banner");
+      if (!unidade) { ban.hidden = true; return; }
+      var s = WebSaude.situacaoUnidade(unidade);
+      if (s === "Pendente") {
+        ban.hidden = false;
+        ban.className = "callout callout-warn";
+        ban.innerHTML = "<strong>Em análise.</strong> Retire o envio se precisar editar.";
+      } else if (s === "Rejeitado") {
+        ban.hidden = false;
+        ban.className = "callout callout-danger";
+        ban.innerHTML = "<strong>Rejeitada.</strong> Motivo: " + esc(unidade.motivoRejeicao || "Revise o cadastro e reenvie.");
+      } else if (s === "Aprovado" && unidade.status !== "Publicado") {
+        ban.hidden = false;
+        ban.className = "callout callout-ok";
+        ban.innerHTML = "<strong>Aprovada.</strong> No último passo você pode publicar.";
+      } else if (s === "Aprovado") {
+        ban.hidden = false;
+        ban.className = "callout callout-ok";
+        ban.innerHTML = "<strong>Publicada.</strong> Um novo envio volta para análise.";
+      } else {
+        ban.hidden = true;
+      }
+    }
+
+    function renderEsp() {
+      var all = WebSaude.ESPECIALIDADES.concat(customEsp);
+      document.getElementById("lista-esp").innerHTML = all.map(function (s) {
+        var on = especialidades.indexOf(s) >= 0 ? " checked" : "";
+        return '<label><input type="checkbox" data-esp="' + esc(s) + '"' + on + "><span>" + esc(s) + "</span></label>";
+      }).join("");
+    }
+
+    function renderHor() {
+      document.getElementById("lista-hor").innerHTML = horarios.map(function (h) {
+        return '<div class="hours-row' + (h.active ? " is-on" : "") + '">' +
+          '<label class="hours-day"><input type="checkbox" data-hor="' + h.weekday + '" data-campo="active"' + (h.active ? " checked" : "") + ">" +
+          "<span>" + WebSaude.DIAS[h.weekday] + "</span></label>" +
+          '<input class="input" type="time" data-hor="' + h.weekday + '" data-campo="opensAt" value="' + h.opensAt + '" aria-label="Abre">' +
+          '<span class="hours-sep">às</span>' +
+          '<input class="input" type="time" data-hor="' + h.weekday + '" data-campo="closesAt" value="' + h.closesAt + '" aria-label="Fecha">' +
+          "</div>";
+      }).join("");
+    }
+
+    function renderFotos() {
+      var box = document.getElementById("perfil-preview");
+      if (perfil) {
+        box.innerHTML = '<img src="' + esc(perfil.url) + '" alt="Foto de perfil">' +
+          '<button type="button" class="photo-thumb-x" id="del-perfil" aria-label="Remover foto de perfil">×</button>';
+        document.getElementById("perfil-btn-label").textContent = "Trocar foto de perfil";
+      } else {
+        box.innerHTML = "<span>Sem foto de perfil</span>";
+        document.getElementById("perfil-btn-label").textContent = "Escolher foto de perfil";
+      }
+      document.getElementById("fotos-grid").innerHTML = galeria.map(function (f) {
+        return '<div class="photo-thumb">' +
+          '<img src="' + esc(f.url) + '" alt="">' +
+          '<button type="button" aria-label="Remover foto" data-del="' + esc(f.id) + '">×</button>' +
+          "</div>";
+      }).join("");
+      document.getElementById("galeria-vazia").hidden = galeria.length > 0;
+    }
+
+    function renderAcoes() {
+      var s = unidade ? WebSaude.situacaoUnidade(unidade) : "Rascunho";
+      var ultimo = passo === STEPS.length - 1;
+      var html = "";
+      if (passo > 0) html += '<button class="btn btn-ghost" type="button" id="voltar">Voltar</button>';
+      else html += '<a class="btn btn-ghost" href="minhas-unidades.html">Cancelar</a>';
+      if (s === "Pendente") {
+        html += '<button class="btn btn-ghost" type="button" id="retirar">Retirar envio</button>';
+        if (!ultimo) html += '<button class="btn btn-primary" type="button" id="proximo">Próximo</button>';
+      } else {
+        html += '<button class="btn btn-ghost" type="button" id="rascunho">Salvar rascunho</button>';
+        if (!ultimo) {
+          html += '<button class="btn btn-primary" type="button" id="proximo">Próximo</button>';
+        } else if (s === "Aprovado" && unidade && unidade.status !== "Publicado") {
+          html += '<button class="btn btn-primary" type="button" id="publicar">Publicar</button>';
+        } else {
+          html += '<button class="btn btn-primary" type="submit" id="enviar">' + (s === "Rejeitado" ? "Reenviar para aprovação" : "Enviar para aprovação") + "</button>";
+        }
+      }
+      document.getElementById("acoes").innerHTML = html;
+    }
+
+    function setLocked(on) {
+      document.querySelectorAll("#form input, #form textarea, #form select, #add-esp").forEach(function (el) {
+        el.disabled = on;
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    function urlsFotos() {
+      var urls = [];
+      if (perfil) urls.push(perfil.url);
+      galeria.forEach(function (f) { urls.push(f.url); });
+      return urls;
+    }
+
+    function lerForm() {
+      var form = document.getElementById("form");
+      var tipo = (form.querySelector('input[name="tipo"]:checked') || {}).value || "Hospital";
+      var rua = form.rua.value.trim();
+      var numero = form.numero.value.trim();
+      var complemento = form.complemento.value.trim();
+      var cidade = form.cidade.value.trim();
+      var estado = form.estado.value;
+      var endereco = [rua + (numero ? ", " + numero : ""), complemento].filter(Boolean).join(" — ");
+      if (cidade) endereco = endereco ? endereco + " — " + cidade : cidade;
+      var fone = form.telefone.value.trim();
+      var urls = urlsFotos();
+      return {
+        nome: form.nome.value.trim(),
+        tipo: tipo,
+        email: form.email.value.trim(),
+        telefone: fone,
+        whatsapp: fone,
+        descricao: form.descricao.value.trim(),
+        rua: rua,
+        numero: numero,
+        complemento: complemento,
+        cep: form.cep.value.trim(),
+        cidade: cidade,
+        estado: estado,
+        endereco: endereco || cidade,
+        especialidades: especialidades.slice(),
+        horarios: horarios.map(function (h) { return Object.assign({}, h); }),
+        fotos: urls,
+        foto: urls[0] || "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80"
+      };
+    }
+
+    function validarNome() {
+      var nome = document.getElementById("form").nome.value.trim();
+      var err = document.getElementById("nome-error");
+      if (!nome) {
+        err.hidden = false;
+        irPara(0);
+        document.getElementById("form").nome.focus();
+        return false;
+      }
+      err.hidden = true;
+      return true;
+    }
+
+    function proximoId() {
+      return WebSaude.unidades.reduce(function (max, u) { return Math.max(max, Number(u.id) || 0); }, 0) + 1;
+    }
+
+    function salvar(destino) {
+      if (!validarNome()) return;
+      var dados = lerForm();
+      var ativo = dados.horarios.filter(function (h) { return h.active; })[0];
+      dados.horario = ativo ? ("Aberto das " + ativo.opensAt + " às " + ativo.closesAt) : "Horário a definir";
+      if (!unidade) {
+        unidade = {
+          id: proximoId(),
+          gestor: WebSaude.GESTOR_ATUAL,
+          nota: 0,
+          avaliacoes: 0,
+          aberto: true,
+          convenios: [],
+          distancia: "—",
+          dataEnvio: new Date().toLocaleDateString("pt-BR")
+        };
+        WebSaude.unidades.push(unidade);
+      }
+      Object.assign(unidade, dados);
+      if (destino === "pendente") {
+        unidade.aprovacao = "Pendente";
+        unidade.status = "Rascunho";
+        unidade.dataEnvio = new Date().toLocaleDateString("pt-BR");
+        unidade.motivoRejeicao = "";
+      } else if (destino === "publicado") {
+        unidade.aprovacao = "Aprovado";
+        unidade.status = "Publicado";
+      } else {
+        unidade.aprovacao = "Rascunho";
+        unidade.status = "Rascunho";
+      }
+      WebSaude.persistUnidades();
+      return unidade;
+    }
+
+    function addFiles(lista, destino) {
+      Array.prototype.forEach.call(lista || [], function (file) {
+        var item = { id: file.name + "-" + file.lastModified + "-" + Math.random(), url: URL.createObjectURL(file) };
+        if (destino === "perfil") perfil = item;
+        else galeria.push(item);
+      });
+      renderFotos();
+    }
+
+    document.getElementById("form").addEventListener("keydown", function (e) {
+      if (e.key !== "Enter") return;
+      if (e.target && e.target.id === "esp-custom") {
+        e.preventDefault();
+        document.getElementById("add-esp").click();
+        return;
+      }
+      if (e.target && e.target.tagName === "INPUT") e.preventDefault();
+    });
+
+    document.getElementById("lista-esp").addEventListener("change", function (e) {
+      var box = e.target.closest("[data-esp]");
+      if (!box) return;
+      var nome = box.getAttribute("data-esp");
+      if (box.checked) {
+        if (especialidades.indexOf(nome) < 0) especialidades.push(nome);
+      } else {
+        especialidades = especialidades.filter(function (s) { return s !== nome; });
+        customEsp = customEsp.filter(function (s) { return s !== nome; });
+      }
+    });
+
+    document.getElementById("add-esp").addEventListener("click", function () {
+      var v = document.getElementById("esp-custom").value.trim();
+      if (!v) return;
+      if (especialidades.indexOf(v) < 0) especialidades.push(v);
+      if (WebSaude.ESPECIALIDADES.indexOf(v) < 0 && customEsp.indexOf(v) < 0) customEsp.push(v);
+      document.getElementById("esp-custom").value = "";
+      renderEsp();
+    });
+
+    document.getElementById("lista-hor").addEventListener("change", function (e) {
+      var el = e.target.closest("[data-hor]");
+      if (!el) return;
+      var day = Number(el.getAttribute("data-hor"));
+      var campo = el.getAttribute("data-campo");
+      horarios.forEach(function (h) {
+        if (h.weekday !== day) return;
+        h[campo] = campo === "active" ? el.checked : el.value;
+      });
+      if (campo === "active") renderHor();
+    });
+
+    document.getElementById("perfil-input").addEventListener("change", function (e) {
+      addFiles(e.target.files, "perfil");
+      e.target.value = "";
+    });
+    document.getElementById("galeria-input").addEventListener("change", function (e) {
+      addFiles(e.target.files, "galeria");
+      e.target.value = "";
+    });
+    document.getElementById("perfil-preview").addEventListener("click", function (e) {
+      if (e.target.id === "del-perfil") {
+        perfil = null;
+        renderFotos();
+      }
+    });
+    document.getElementById("fotos-grid").addEventListener("click", function (e) {
+      var del = e.target.closest("[data-del]");
+      if (!del) return;
+      galeria = galeria.filter(function (f) { return f.id !== del.getAttribute("data-del"); });
+      renderFotos();
+    });
+
     document.getElementById("form").addEventListener("submit", function (e) {
       e.preventDefault();
+      if (locked || passo !== STEPS.length - 1) return;
+      if (!salvar("pendente")) return;
       WebSaude.ui.toast("Unidade enviada para aprovação.");
-      setTimeout(function () { location.href = "minhas-unidades.html"; }, 800);
+      setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
     });
-    document.getElementById("rascunho").onclick = function () { WebSaude.ui.toast("Rascunho salvo."); };
+
+    document.getElementById("acoes").addEventListener("click", function (e) {
+      if (e.target.id === "proximo") {
+        if (passo === 0 && !validarNome()) return;
+        irPara(passo + 1);
+      }
+      if (e.target.id === "voltar") irPara(passo - 1);
+      if (e.target.id === "rascunho") {
+        if (!salvar("rascunho")) return;
+        WebSaude.ui.toast("Rascunho salvo.");
+        setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
+      }
+      if (e.target.id === "publicar") {
+        if (!salvar("publicado")) return;
+        WebSaude.ui.toast("Unidade publicada.");
+        setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
+      }
+      if (e.target.id === "retirar") {
+        unidade.aprovacao = "Rascunho";
+        unidade.status = "Rascunho";
+        WebSaude.persistUnidades();
+        WebSaude.ui.toast("Envio retirado. Agora você pode editar.");
+        location.href = "cadastro-unidade.html?id=" + unidade.id;
+      }
+    });
   </script>
 </body>
 </html>

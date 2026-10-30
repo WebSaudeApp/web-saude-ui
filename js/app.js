@@ -45,9 +45,8 @@
   }
 
   function header(active, mode) {
-    const links = [
-      ["index.html", "Início"]
-    ];
+    const links = [["index.html", "Início"]];
+    if (mode === "gestor") links.push(["minhas-unidades.html", "Minhas unidades"]);
     let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a>';
     if (mode === "user") extra = '<a class="btn btn-ghost" href="perfil.html">Maria Silva</a>';
     if (mode === "gestor") extra = '<a class="btn btn-ghost" href="minhas-unidades.html">Dra. Maria Silva</a>';

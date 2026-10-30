@@ -9,59 +9,290 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="page">
-    <div data-header="Início" data-mode="gestor"></div>
-    <main class="wrap" style="padding:28px 0 48px">
+    <div data-header="Minhas unidades" data-mode="gestor"></div>
+    <main id="conteudo" class="wrap gestor">
       <div class="toolbar">
-        <h1>Minhas unidades</h1>
+        <div>
+          <p class="admin-kicker">Gestor de unidades</p>
+          <h1 id="gestor-title">Minhas unidades</h1>
+          <p class="gestor-lead">Só você vê e administra as unidades desta conta. Acompanhe rascunho, envio, aprovação e publicação.</p>
+        </div>
         <a class="btn btn-primary" href="cadastro-unidade.html">Adicionar nova unidade</a>
       </div>
-      <div class="toolbar" style="margin:16px 0">
-        <select class="select" id="status" style="max-width:180px">
-          <option value="">Todos os status</option>
-          <option>Publicado</option>
-          <option>Rascunho</option>
-        </select>
-        <select class="select" id="aprovacao" style="max-width:180px">
-          <option value="">Todas as aprovações</option>
-          <option>Aprovado</option>
-          <option>Pendente</option>
-        </select>
-        <input class="input" id="busca" placeholder="Buscar unidade">
+
+      <div class="card filter-bar filter-bar-units">
+        <label class="field filter-search">
+          <span>Buscar unidade</span>
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            <input class="input" id="busca" type="search" placeholder="Nome, cidade ou especialidade" autocomplete="off">
+          </span>
+        </label>
+        <fieldset class="filter-pills">
+          <legend>Situação</legend>
+          <label><input type="radio" name="filtroSit" value="" checked><span>Todas <b id="n-todas">0</b></span></label>
+          <label><input type="radio" name="filtroSit" value="Rascunho"><span>Rascunhos <b id="n-rasc">0</b></span></label>
+          <label><input type="radio" name="filtroSit" value="Pendente"><span>Pendentes <b id="n-pend">0</b></span></label>
+          <label><input type="radio" name="filtroSit" value="Aprovado"><span>Aprovadas <b id="n-apr">0</b></span></label>
+          <label><input type="radio" name="filtroSit" value="Rejeitado"><span>Rejeitadas <b id="n-rej">0</b></span></label>
+        </fieldset>
+        <div class="filter-bar-foot">
+          <p class="filter-meta" id="meta"></p>
+          <button class="btn btn-ghost btn-sm" type="button" id="resetFiltros" hidden>Limpar filtros</button>
+        </div>
       </div>
-      <div class="card table-wrap" id="tabela"></div>
+
+      <div class="card admin-list">
+        <div class="admin-list-scroll" id="gestor-scroll">
+          <table class="admin-table admin-table-pending">
+            <caption class="sr-only">Unidades desta conta</caption>
+            <thead>
+              <tr>
+                <th scope="col">Unidade</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Situação</th>
+                <th scope="col"><span class="sr-only">Ações</span></th>
+              </tr>
+            </thead>
+            <tbody id="lista"></tbody>
+          </table>
+        </div>
+      </div>
     </main>
     <div data-footer></div>
   </div>
+
+  <dialog class="dialog" id="dlg-confirm" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+    <div class="dialog-card">
+      <h2 id="confirm-title">Confirmar ação</h2>
+      <p id="confirm-text"></p>
+      <div class="form-actions">
+        <button class="btn btn-ghost" type="button" id="confirm-cancel">Cancelar</button>
+        <button class="btn btn-primary" type="button" id="confirm-ok">Confirmar</button>
+      </div>
+    </div>
+  </dialog>
+
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    function itens() {
-      var s = document.getElementById("status").value;
-      var a = document.getElementById("aprovacao").value;
-      var q = document.getElementById("busca").value.toLowerCase();
-      return WebSaude.unidades.filter(function (u) {
-        return (!s || u.status === s) && (!a || u.aprovacao === a) && (!q || u.nome.toLowerCase().indexOf(q) >= 0);
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
     }
-    var view = WebSaude.ui.renderList({
-      target: "#tabela",
-      items: itens,
-      perPage: 3,
-      noun: "unidades",
-      render: function (u) {
-        var st = u.status === "Publicado" ? "chip-ok" : "chip-muted";
-        var ap = u.aprovacao === "Aprovado" ? "chip-ok" : "chip-warn";
-        return '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.2fr;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center">' +
-          "<div><b>" + u.nome + "</b></div><div>" + u.tipo + "</div>" +
-          '<div><span class="chip ' + st + '">' + u.status + "</span></div>" +
-          '<div><span class="chip ' + ap + '">' + u.aprovacao + "</span></div>" +
-          '<div class="row-actions"><a href="cadastro-unidade.html">Editar</a><a href="detalhes.html?id=' + u.id + '">Ver</a><button class="danger" type="button">Deletar</button></div></div>';
+
+    var pendingAction = null;
+    var TITULO = {
+      "": "Minhas unidades",
+      Rascunho: "Rascunhos",
+      Pendente: "Aguardando aprovação",
+      Aprovado: "Aprovadas",
+      Rejeitado: "Rejeitadas"
+    };
+
+    function sit() {
+      var el = document.querySelector('input[name="filtroSit"]:checked');
+      return el ? el.value : "";
+    }
+
+    function minhas() {
+      return WebSaude.minhasUnidades();
+    }
+
+    function filtradas() {
+      var q = document.getElementById("busca").value.trim().toLowerCase();
+      var s = sit();
+      return minhas().filter(function (u) {
+        if (s && WebSaude.situacaoUnidade(u) !== s) return false;
+        if (!q) return true;
+        var specs = (u.especialidades || []).join(" ");
+        return (u.nome + " " + u.tipo + " " + u.cidade + " " + specs).toLowerCase().indexOf(q) >= 0;
+      });
+    }
+
+    function chipSit(u) {
+      var s = WebSaude.situacaoUnidade(u);
+      if (s === "Aprovado" && u.status === "Publicado") return '<span class="chip chip-ok">Publicada</span>';
+      if (s === "Aprovado") return '<span class="chip chip-ok">Aprovada · publicar</span>';
+      if (s === "Pendente") return '<span class="chip chip-warn">Aguardando aprovação</span>';
+      if (s === "Rejeitado") return '<span class="chip chip-muted">Rejeitada</span>';
+      return '<span class="chip chip-muted">Rascunho</span>';
+    }
+
+    function acoes(u) {
+      var s = WebSaude.situacaoUnidade(u);
+      var html = "";
+      if (s === "Rascunho" || s === "Rejeitado") {
+        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar</a>';
+        html += '<button class="btn btn-primary btn-sm" type="button" data-enviar="' + u.id + '">' + (s === "Rejeitado" ? "Reenviar" : "Enviar") + "</button>";
+        html += '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-excluir="' + u.id + '">Excluir</button>';
+      } else if (s === "Pendente") {
+        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Ver cadastro</a>';
+        html += '<button class="btn btn-ghost btn-sm" type="button" data-retirar="' + u.id + '">Retirar envio</button>';
+      } else {
+        html += '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver</a>';
+        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar</a>';
+        if (u.status !== "Publicado") {
+          html += '<button class="btn btn-primary btn-sm" type="button" data-publicar="' + u.id + '">Publicar</button>';
+        }
+      }
+      return html;
+    }
+
+    function linha(u) {
+      var local = [u.cidade, u.estado].filter(Boolean).join(", ");
+      var foto = (u.fotos && u.fotos[0]) || u.foto || "";
+      var motivo = WebSaude.situacaoUnidade(u) === "Rejeitado" && u.motivoRejeicao
+        ? '<small class="unit-motivo">Motivo: ' + esc(u.motivoRejeicao) + "</small>"
+        : "";
+      return "<tr>" +
+        '<th scope="row"><div class="unit-cell"><img src="' + esc(foto) + '" alt="">' +
+        "<div><div>" + esc(u.nome) + "</div><small>" + esc(local) + "</small>" + motivo + "</div></div></th>" +
+        '<td data-label="Tipo">' + esc(u.tipo) + "</td>" +
+        '<td data-label="Situação">' + chipSit(u) + "</td>" +
+        '<td><div class="row-actions">' + acoes(u) + "</div></td></tr>";
+    }
+
+    function vazio() {
+      var s = sit();
+      if (s === "Pendente") return "Nenhuma unidade aguardando aprovação.";
+      if (s === "Rascunho") return "Nenhum rascunho nesta conta.";
+      if (s === "Rejeitado") return "Nenhuma unidade rejeitada.";
+      if (s === "Aprovado") return "Nenhuma unidade aprovada.";
+      return "Você ainda não cadastrou unidades.";
+    }
+
+    function contar() {
+      var all = minhas();
+      document.getElementById("n-todas").textContent = all.length;
+      document.getElementById("n-rasc").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Rascunho"; }).length;
+      document.getElementById("n-pend").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Pendente"; }).length;
+      document.getElementById("n-apr").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Aprovado"; }).length;
+      document.getElementById("n-rej").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Rejeitado"; }).length;
+    }
+
+    var view = WebSaude.ui.renderInfinite({
+      target: "#lista",
+      root: "#gestor-scroll",
+      sentinel: "tr",
+      colspan: 4,
+      perPage: 5,
+      items: filtradas,
+      render: linha,
+      empty: function () {
+        return '<tr><td colspan="4"><p class="admin-empty">' + vazio() + "</p></td></tr>";
+      },
+      onMeta: function (shown, total, hasMore) {
+        document.getElementById("gestor-title").textContent = TITULO[sit()] || "Minhas unidades";
+        document.getElementById("meta").textContent = total
+          ? (hasMore ? "Mostrando " + shown + " de " + total + " · continue rolando" : total + (total === 1 ? " unidade" : " unidades"))
+          : vazio();
+        document.getElementById("resetFiltros").hidden = !(document.getElementById("busca").value.trim() || sit());
       }
     });
-    document.getElementById("status").onchange = view.refresh;
-    document.getElementById("aprovacao").onchange = view.refresh;
-    document.getElementById("busca").oninput = view.refresh;
+
+    function refresh() {
+      contar();
+      view.refresh();
+    }
+
+    function porId(id) {
+      return WebSaude.unidades.filter(function (u) { return u.id === id && u.gestor === WebSaude.GESTOR_ATUAL; })[0];
+    }
+
+    function confirmar(opts) {
+      pendingAction = opts.onOk;
+      document.getElementById("confirm-title").textContent = opts.titulo;
+      document.getElementById("confirm-text").textContent = opts.texto;
+      var ok = document.getElementById("confirm-ok");
+      ok.textContent = opts.rotulo || "Confirmar";
+      ok.classList.toggle("btn-danger-solid", !!opts.perigo);
+      ok.classList.toggle("btn-primary", !opts.perigo);
+      document.getElementById("dlg-confirm").showModal();
+    }
+
+    document.getElementById("confirm-cancel").addEventListener("click", function () {
+      pendingAction = null;
+      document.getElementById("dlg-confirm").close();
+    });
+    document.getElementById("confirm-ok").addEventListener("click", function () {
+      var run = pendingAction;
+      pendingAction = null;
+      document.getElementById("dlg-confirm").close();
+      if (run) run();
+    });
+
+    document.getElementById("lista").addEventListener("click", function (e) {
+      var enviar = e.target.closest("[data-enviar]");
+      var retirar = e.target.closest("[data-retirar]");
+      var publicar = e.target.closest("[data-publicar]");
+      var excluir = e.target.closest("[data-excluir]");
+      if (enviar) {
+        var u = porId(Number(enviar.getAttribute("data-enviar")));
+        if (!u) return;
+        u.aprovacao = "Pendente";
+        u.status = "Rascunho";
+        u.dataEnvio = new Date().toLocaleDateString("pt-BR");
+        WebSaude.persistUnidades();
+        WebSaude.ui.toast(u.nome + " enviada para aprovação.");
+        refresh();
+      }
+      if (retirar) {
+        var r = porId(Number(retirar.getAttribute("data-retirar")));
+        if (!r) return;
+        confirmar({
+          titulo: "Retirar envio",
+          texto: "Retirar “" + r.nome + "” da fila de aprovação? Ela volta para rascunho.",
+          rotulo: "Retirar",
+          onOk: function () {
+            r.aprovacao = "Rascunho";
+            r.status = "Rascunho";
+            WebSaude.persistUnidades();
+            WebSaude.ui.toast("Envio retirado. A unidade voltou a rascunho.");
+            refresh();
+          }
+        });
+      }
+      if (publicar) {
+        var p = porId(Number(publicar.getAttribute("data-publicar")));
+        if (!p) return;
+        p.status = "Publicado";
+        WebSaude.persistUnidades();
+        WebSaude.ui.toast(p.nome + " publicada.");
+        refresh();
+      }
+      if (excluir) {
+        var x = porId(Number(excluir.getAttribute("data-excluir")));
+        if (!x) return;
+        confirmar({
+          titulo: "Excluir unidade",
+          texto: "Excluir “" + x.nome + "”? Esta ação não pode ser desfeita neste protótipo.",
+          rotulo: "Excluir",
+          perigo: true,
+          onOk: function () {
+            WebSaude.unidades = WebSaude.unidades.filter(function (item) { return item.id !== x.id; });
+            WebSaude.persistUnidades();
+            WebSaude.ui.toast("Unidade excluída.");
+            refresh();
+          }
+        });
+      }
+    });
+
+    document.getElementById("busca").addEventListener("input", refresh);
+    document.querySelectorAll('input[name="filtroSit"]').forEach(function (el) {
+      el.addEventListener("change", refresh);
+    });
+    document.getElementById("resetFiltros").addEventListener("click", function () {
+      document.getElementById("busca").value = "";
+      document.querySelector('input[name="filtroSit"][value=""]').checked = true;
+      refresh();
+    });
+
+    refresh();
   </script>
 </body>
 </html>

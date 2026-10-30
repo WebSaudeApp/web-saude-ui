@@ -235,13 +235,11 @@
     }
 
     var PAPEL = { Admin: "Administrador", Functional: "Gestor", Common: "Paciente" };
-    var GESTOR = { 2: "Dra. Maria Silva", 8: "Dr. Roberto Dias", 11: "Ana Lima" };
-    var DATA = { 2: "12/10/2023", 8: "14/10/2023", 11: "18/10/2023" };
 
     var listaUnidades = WebSaude.unidades.map(function (u) {
       return Object.assign({}, u, {
-        gestor: GESTOR[u.id] || "Gestor responsável",
-        dataEnvio: DATA[u.id] || "10/10/2023"
+        gestor: u.gestor || "Gestor responsável",
+        dataEnvio: u.dataEnvio || "10/10/2023"
       });
     });
     var listaUsuarios = WebSaude.usuarios.map(function (u) { return Object.assign({}, u); });
