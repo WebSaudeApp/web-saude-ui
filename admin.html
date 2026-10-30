@@ -15,7 +15,7 @@
     <main id="conteudo" class="wrap admin">
       <nav class="card side-nav admin-nav" aria-label="Seções do painel">
         <a href="#dash">Indicadores</a>
-        <a href="#pendentes">Aprovar unidades</a>
+        <a href="#unidades">Unidades</a>
         <a href="#usuarios">Gerenciar usuários</a>
         <a href="#acoes">Últimas ações</a>
       </nav>
@@ -40,7 +40,7 @@
               <p class="kpi-value" id="kpi-usuarios">0</p>
               <p class="kpi-hint" id="kpi-usuarios-hint"></p>
             </a>
-            <a class="card kpi kpi-warn" href="#pendentes">
+            <a class="card kpi kpi-warn" href="#unidades">
               <p class="kpi-label">Unidades pendentes</p>
               <p class="kpi-value" id="kpi-pendentes">0</p>
               <p class="kpi-hint">Aguardando revisão</p>
@@ -55,7 +55,7 @@
             <article class="card chart-card">
               <div>
                 <h3>Situação das unidades</h3>
-                <p class="chart-hint">Clique para filtrar a fila</p>
+                <p class="chart-hint">Clique para filtrar a lista</p>
               </div>
               <div class="chart-body" id="chart-unidades"></div>
             </article>
@@ -76,11 +76,11 @@
           </div>
         </section>
 
-        <section id="pendentes" class="admin-section" aria-labelledby="pendentes-title">
+        <section id="unidades" class="admin-section" aria-labelledby="unidades-title">
           <div class="toolbar">
-            <h2 id="pendentes-title" class="section-title toolbar-title">Pendentes de aprovação</h2>
+            <h2 id="unidades-title" class="section-title toolbar-title">Unidades</h2>
           </div>
-          <div class="card filter-bar filter-bar-simple">
+          <div class="card filter-bar filter-bar-units">
             <label class="field filter-search">
               <span>Buscar unidade</span>
               <span class="input-icon">
@@ -88,24 +88,33 @@
                 <input class="input" id="buscaUnidade" type="search" placeholder="Nome, cidade, especialidade ou gestor" autocomplete="off">
               </span>
             </label>
-            <div class="filter-bar-side">
+            <fieldset class="filter-pills">
+              <legend>Situação</legend>
+              <label><input type="radio" name="filtroUnidade" value="" checked><span>Todas <b id="n-u-todas">0</b></span></label>
+              <label><input type="radio" name="filtroUnidade" value="Pendente"><span>Pendentes <b id="n-u-pend">0</b></span></label>
+              <label><input type="radio" name="filtroUnidade" value="Aprovado"><span>Publicadas <b id="n-u-pub">0</b></span></label>
+              <label><input type="radio" name="filtroUnidade" value="Rejeitado"><span>Rejeitadas <b id="n-u-rej">0</b></span></label>
+            </fieldset>
+            <div class="filter-bar-foot">
               <p class="filter-meta" id="meta-pendentes"></p>
-              <button class="btn btn-ghost btn-sm" type="button" id="resetUnidades" hidden>Ver fila de pendentes</button>
+              <button class="btn btn-ghost btn-sm" type="button" id="resetUnidades" hidden>Limpar filtros</button>
             </div>
           </div>
-          <div class="card table-wrap">
-            <table class="admin-table admin-table-pending">
-              <caption class="sr-only" id="cap-pendentes">Unidades aguardando aprovação do administrador</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Unidade</th>
-                  <th scope="col">Gestor</th>
-                  <th scope="col">Enviada em</th>
-                  <th scope="col"><span class="sr-only">Ações</span></th>
-                </tr>
-              </thead>
-              <tbody id="lista-pendentes"></tbody>
-            </table>
+          <div class="card admin-list">
+            <div class="admin-list-scroll" id="units-scroll">
+              <table class="admin-table admin-table-pending">
+                <caption class="sr-only" id="cap-unidades">Unidades cadastradas na plataforma</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Unidade</th>
+                    <th scope="col">Gestor</th>
+                    <th scope="col">Enviada em</th>
+                    <th scope="col"><span class="sr-only">Ações</span></th>
+                  </tr>
+                </thead>
+                <tbody id="lista-pendentes"></tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -264,8 +273,8 @@
 
     var pendingAction = null;
     var pendingNeedsMotivo = false;
-    var filtroUnidade = "Pendente";
     var TITULO_UNIDADE = {
+      "": "Unidades",
       Pendente: "Pendentes de aprovação",
       Aprovado: "Unidades publicadas",
       Rejeitado: "Unidades rejeitadas",
@@ -284,14 +293,24 @@
       return "Rascunho";
     }
 
-    function pendentes() {
+    function unidadeFiltro() {
+      var el = document.querySelector('input[name="filtroUnidade"]:checked');
+      return el ? el.value : "";
+    }
+
+    function unidadesFiltradas() {
       var q = document.getElementById("buscaUnidade").value.trim().toLowerCase();
+      var sit = unidadeFiltro();
       return listaUnidades.filter(function (u) {
-        if (situacaoUnidade(u) !== filtroUnidade) return false;
+        if (sit && situacaoUnidade(u) !== sit) return false;
         if (!q) return true;
         var specs = (u.especialidades || []).join(" ");
         return (u.nome + " " + u.tipo + " " + u.gestor + " " + u.cidade + " " + u.estado + " " + specs).toLowerCase().indexOf(q) >= 0;
       });
+    }
+
+    function temFiltroUnidade() {
+      return !!(document.getElementById("buscaUnidade").value.trim() || unidadeFiltro());
     }
 
     function statusFiltro() {
@@ -328,7 +347,7 @@
     }
 
     function parteAtiva(p) {
-      if (p.unit) return filtroUnidade === p.unit;
+      if (p.unit) return unidadeFiltro() === p.unit;
       if (p.status) return statusFiltro() === p.status;
       if (p.papel) return document.getElementById("filtroPapel").value === p.papel;
       return false;
@@ -393,11 +412,15 @@
       document.getElementById("n-todos").textContent = String(listaUsuarios.length);
       document.getElementById("n-ativos").textContent = String(ativos);
       document.getElementById("n-inativos").textContent = String(inativos);
+      document.getElementById("n-u-todas").textContent = String(listaUnidades.length);
+      document.getElementById("n-u-pend").textContent = String(nPend);
+      document.getElementById("n-u-pub").textContent = String(nAprov);
+      document.getElementById("n-u-rej").textContent = String(nRej);
       document.getElementById("chart-unidades").innerHTML = donut([
-        { label: "Publicadas", value: nAprov, color: "#0f766e", go: "#pendentes", unit: "Aprovado" },
-        { label: "Pendentes", value: nPend, color: "#f59e0b", go: "#pendentes", unit: "Pendente" },
-        { label: "Rejeitadas", value: nRej, color: "#fb7185", go: "#pendentes", unit: "Rejeitado" },
-        { label: "Rascunho", value: nRasc, color: "#cbd5e1", go: "#pendentes", unit: "Rascunho" }
+        { label: "Publicadas", value: nAprov, color: "#0f766e", go: "#unidades", unit: "Aprovado" },
+        { label: "Pendentes", value: nPend, color: "#f59e0b", go: "#unidades", unit: "Pendente" },
+        { label: "Rejeitadas", value: nRej, color: "#fb7185", go: "#unidades", unit: "Rejeitado" },
+        { label: "Rascunho", value: nRasc, color: "#cbd5e1", go: "#unidades", unit: "Rascunho" }
       ].filter(function (p) { return p.value > 0; }), "unidades");
       document.getElementById("chart-status").innerHTML = donut([
         { label: "Ativos", value: ativos, color: "#0f766e", go: "#usuarios", status: "Ativo" },
@@ -476,10 +499,12 @@
 
     function aplicarFiltroGrafico(f) {
       if (f.unit) {
-        filtroUnidade = f.unit;
-        drawPendentes();
+        var radio = document.querySelector('input[name="filtroUnidade"][value="' + f.unit + '"]');
+        if (radio) radio.checked = true;
+        else document.querySelector('input[name="filtroUnidade"][value=""]').checked = true;
+        unitsView.refresh();
         atualizarKpis();
-        irPara(f.go || "#pendentes");
+        irPara(f.go || "#unidades");
         return;
       }
       if (f.status !== undefined) {
@@ -496,41 +521,62 @@
       irPara(f.go || "#usuarios");
     }
 
-    function drawPendentes() {
-      var lista = pendentes();
-      var tbody = document.getElementById("lista-pendentes");
-      var q = document.getElementById("buscaUnidade").value.trim();
-      var titulo = TITULO_UNIDADE[filtroUnidade] || "Unidades";
-      var vazio = q
-        ? "Nenhuma unidade corresponde à busca."
-        : (filtroUnidade === "Pendente" ? "Nenhuma unidade pendente de aprovação." : "Nenhuma unidade neste filtro.");
-      document.getElementById("pendentes-title").textContent = titulo;
-      document.getElementById("cap-pendentes").textContent = titulo;
-      document.getElementById("resetUnidades").hidden = filtroUnidade === "Pendente";
-      document.getElementById("meta-pendentes").textContent = lista.length
-        ? lista.length + (lista.length === 1 ? " unidade encontrada" : " unidades encontradas")
-        : vazio;
-      if (!lista.length) {
-        tbody.innerHTML = '<tr><td colspan="4"><p class="admin-empty">' + vazio + "</p></td></tr>";
-        return;
-      }
-      tbody.innerHTML = lista.map(function (u) {
-        var local = [u.cidade, u.estado].filter(Boolean).join(", ");
-        var acoes = filtroUnidade === "Pendente"
-          ? '<button class="btn btn-primary btn-sm" type="button" data-approve="' + u.id + '">Aprovar</button>' +
-            '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-reject="' + u.id + '">Rejeitar</button>'
-          : "";
-        return "<tr>" +
-          '<th scope="row"><div class="unit-cell"><img src="' + esc(u.foto) + '" alt="">' +
-          "<div><div>" + esc(u.nome) + "</div><small>" + esc(local) + (u.tipo ? " · " + esc(u.tipo) : "") + "</small>" +
-          especialidadesHtml(u) + "</div></div></th>" +
-          '<td data-label="Gestor">' + esc(u.gestor) + "</td>" +
-          '<td data-label="Enviada em">' + esc(u.dataEnvio) + "</td>" +
-          '<td><div class="row-actions">' + acoes +
-          '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver detalhes</a>' +
-          "</div></td></tr>";
-      }).join("");
+    function chipSituacao(u) {
+      var s = situacaoUnidade(u);
+      if (s === "Pendente") return '<span class="chip chip-warn">Pendente</span>';
+      if (s === "Aprovado") return '<span class="chip chip-ok">Publicada</span>';
+      if (s === "Rejeitado") return '<span class="chip chip-muted">Rejeitada</span>';
+      return '<span class="chip chip-muted">Rascunho</span>';
     }
+
+    function vazioUnidades() {
+      var sit = unidadeFiltro();
+      if (sit === "Pendente") return "Nenhuma unidade pendente de aprovação.";
+      if (sit === "Aprovado") return "Nenhuma unidade publicada neste filtro.";
+      if (sit === "Rejeitado") return "Nenhuma unidade rejeitada neste filtro.";
+      if (sit === "Rascunho") return "Nenhum rascunho neste filtro.";
+      return "Nenhuma unidade encontrada.";
+    }
+
+    function linhaUnidade(u) {
+      var local = [u.cidade, u.estado].filter(Boolean).join(", ");
+      var pendente = situacaoUnidade(u) === "Pendente";
+      var acoes = pendente
+        ? '<button class="btn btn-primary btn-sm" type="button" data-approve="' + u.id + '">Aprovar</button>' +
+          '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-reject="' + u.id + '">Rejeitar</button>'
+        : "";
+      return "<tr>" +
+        '<th scope="row"><div class="unit-cell"><img src="' + esc(u.foto) + '" alt="">' +
+        "<div><div>" + esc(u.nome) + " " + chipSituacao(u) + "</div><small>" + esc(local) + (u.tipo ? " · " + esc(u.tipo) : "") + "</small>" +
+        especialidadesHtml(u) + "</div></div></th>" +
+        '<td data-label="Gestor">' + esc(u.gestor) + "</td>" +
+        '<td data-label="Enviada em">' + esc(u.dataEnvio) + "</td>" +
+        '<td><div class="row-actions">' + acoes +
+        '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver detalhes</a>' +
+        "</div></td></tr>";
+    }
+
+    var unitsView = WebSaude.ui.renderInfinite({
+      target: "#lista-pendentes",
+      root: "#units-scroll",
+      sentinel: "tr",
+      colspan: 4,
+      perPage: 5,
+      items: unidadesFiltradas,
+      render: linhaUnidade,
+      empty: function () {
+        return '<tr><td colspan="4"><p class="admin-empty">' + vazioUnidades() + "</p></td></tr>";
+      },
+      onMeta: function (shown, total, hasMore) {
+        var titulo = TITULO_UNIDADE[unidadeFiltro()] || "Unidades";
+        document.getElementById("unidades-title").textContent = titulo;
+        document.getElementById("cap-unidades").textContent = titulo;
+        document.getElementById("meta-pendentes").textContent = total
+          ? (hasMore ? "Mostrando " + shown + " de " + total + " unidades · continue rolando" : total + (total === 1 ? " unidade" : " unidades"))
+          : vazioUnidades();
+        document.getElementById("resetUnidades").hidden = !temFiltroUnidade();
+      }
+    });
 
     function linhaUsuario(u) {
       var ativo = u.status === "Ativo";
@@ -559,7 +605,7 @@
       root: "#users-scroll",
       sentinel: "tr",
       colspan: 4,
-      perPage: 10,
+      perPage: 5,
       items: usuariosFiltrados,
       render: linhaUsuario,
       empty: function () {
@@ -576,7 +622,7 @@
 
     function refresh() {
       atualizarKpis();
-      drawPendentes();
+      unitsView.refresh();
       drawHistorico();
       usersView.refresh();
     }
@@ -752,8 +798,13 @@
     document.querySelectorAll('input[name="filtroStatus"]').forEach(function (el) {
       el.addEventListener("change", onFiltroUser);
     });
-    document.getElementById("buscaUnidade").addEventListener("input", function () {
-      drawPendentes();
+    function onFiltroUnidade() {
+      unitsView.refresh();
+      atualizarKpis();
+    }
+    document.getElementById("buscaUnidade").addEventListener("input", onFiltroUnidade);
+    document.querySelectorAll('input[name="filtroUnidade"]').forEach(function (el) {
+      el.addEventListener("change", onFiltroUnidade);
     });
     document.getElementById("limparFiltros").addEventListener("click", function () {
       document.getElementById("buscaUser").value = "";
@@ -764,8 +815,9 @@
       document.getElementById("buscaUser").focus();
     });
     document.getElementById("resetUnidades").addEventListener("click", function () {
-      filtroUnidade = "Pendente";
-      drawPendentes();
+      document.getElementById("buscaUnidade").value = "";
+      document.querySelector('input[name="filtroUnidade"][value=""]').checked = true;
+      unitsView.refresh();
       atualizarKpis();
       document.getElementById("buscaUnidade").focus();
     });
@@ -777,13 +829,14 @@
       aplicarFiltroGrafico(f);
     });
     document.querySelector("a.kpi-warn").addEventListener("click", function () {
-      filtroUnidade = "Pendente";
-      drawPendentes();
+      document.querySelector('input[name="filtroUnidade"][value="Pendente"]').checked = true;
+      unitsView.refresh();
       atualizarKpis();
     });
-    document.querySelector('.admin-nav a[href="#pendentes"]').addEventListener("click", function () {
-      filtroUnidade = "Pendente";
-      drawPendentes();
+    document.querySelector('.admin-nav a[href="#unidades"]').addEventListener("click", function () {
+      document.getElementById("buscaUnidade").value = "";
+      document.querySelector('input[name="filtroUnidade"][value=""]').checked = true;
+      unitsView.refresh();
       atualizarKpis();
     });
 

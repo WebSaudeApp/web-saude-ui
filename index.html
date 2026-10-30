@@ -75,6 +75,33 @@
           <span>Mapa deve ficar aqui</span>
         </aside>
       </div>
+
+      <section class="how-home" aria-labelledby="how-title">
+        <h2 id="how-title">Como funciona</h2>
+        <ol class="how-grid">
+          <li>
+            <span class="how-num" aria-hidden="true">1</span>
+            <div>
+              <h3>Informe o que procura</h3>
+              <p>Use o termo, o tipo, a especialidade, a cidade ou o estado. Tudo é opcional.</p>
+            </div>
+          </li>
+          <li>
+            <span class="how-num" aria-hidden="true">2</span>
+            <div>
+              <h3>Veja a lista e o mapa</h3>
+              <p>Os resultados vêm em ordem de nome, e quem tem localização cadastrada aparece no mapa.</p>
+            </div>
+          </li>
+          <li>
+            <span class="how-num" aria-hidden="true">3</span>
+            <div>
+              <h3>Abra os detalhes</h3>
+              <p>Endereço, contatos, horários, fotos e avaliações de quem já foi atendido.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
     </main>
     <div data-footer></div>
   </div>
@@ -119,7 +146,7 @@
     var lista = WebSaude.ui.renderInfinite({
       target: "#lista",
       root: "self",
-      perPage: 10,
+      perPage: 5,
       empty: '<p class="center-note">Nenhum estabelecimento encontrado.</p>',
       items: filtrar,
       render: linha,

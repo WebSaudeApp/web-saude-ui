@@ -46,10 +46,9 @@
 
   function header(active, mode) {
     const links = [
-      ["index.html", "Início"],
-      ["cidade.html", "Como funciona"]
+      ["index.html", "Início"]
     ];
-    let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a><a class="btn btn-primary" href="registro.html">Registrar</a>';
+    let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a>';
     if (mode === "user") extra = '<a class="btn btn-ghost" href="perfil.html">Maria Silva</a>';
     if (mode === "gestor") extra = '<a class="btn btn-ghost" href="minhas-unidades.html">Dra. Maria Silva</a>';
     if (mode === "admin") extra = '<span class="chip">Administrador</span><a class="btn btn-ghost" href="admin.html" aria-current="page">Painel</a>';
@@ -176,7 +175,7 @@
   function renderInfinite(opts) {
     const root = document.querySelector(opts.target);
     if (!root) return;
-    const PAGE = opts.perPage || 10;
+    const PAGE = opts.perPage || 5;
     let shown = PAGE;
     let observer = null;
     const sentinel = document.createElement(opts.sentinel || "div");
@@ -196,7 +195,7 @@
       else if (typeof opts.root === "string") el = document.querySelector(opts.root);
       else el = opts.root || null;
       if (!el) return null;
-      if (el.scrollHeight <= el.clientHeight + 4) return null;
+      if (el.scrollHeight <= el.clientHeight) return null;
       return el;
     }
 
@@ -211,7 +210,7 @@
           shown += PAGE;
           draw();
         }
-      }, { root: scroller(), rootMargin: "80px" });
+      }, { root: scroller(), rootMargin: "0px" });
       observer.observe(sentinel);
     }
 
