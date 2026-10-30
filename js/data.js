@@ -22,10 +22,13 @@ WebSaude.avaliacoes = [
 ];
 
 WebSaude.usuarios = [
-  { nome: "Carlos Silva", email: "carlos@exemplo.com", tipo: "Admin", status: "Ativo" },
-  { nome: "Maria Souza", email: "maria@exemplo.com", tipo: "Functional", status: "Ativo" },
-  { nome: "João Mendes", email: "joao@exemplo.com", tipo: "Common", status: "Ativo" },
-  { nome: "Patrícia Alves", email: "patricia@exemplo.com", tipo: "Common", status: "Ativo" },
-  { nome: "Roberto Dias", email: "roberto@exemplo.com", tipo: "Functional", status: "Ativo" },
-  { nome: "Fernanda Costa", email: "fernanda@exemplo.com", tipo: "Common", status: "Desativado" }
+  { id: 1, nome: "Carlos Silva", email: "carlos@exemplo.com", tipo: "Admin", status: "Ativo" },
+  { id: 2, nome: "Maria Souza", email: "maria@exemplo.com", tipo: "Functional", status: "Ativo" },
+  { id: 3, nome: "João Mendes", email: "joao@exemplo.com", tipo: "Common", status: "Ativo" },
+  { id: 4, nome: "Patrícia Alves", email: "patricia@exemplo.com", tipo: "Common", status: "Ativo" },
+  { id: 5, nome: "Roberto Dias", email: "roberto@exemplo.com", tipo: "Functional", status: "Ativo" },
+  { id: 6, nome: "Fernanda Costa", email: "fernanda@exemplo.com", tipo: "Common", status: "Desativado" },
+  { id: 7, nome: "Lucas Pereira", email: "lucas@exemplo.com", tipo: "Common", status: "Desativado" },
+  { id: 8, nome: "Beatriz Nunes", email: "beatriz@exemplo.com", tipo: "Functional", status: "Ativo" },
+  { id: 9, nome: "Hugo Almeida", email: "hugo@exemplo.com", tipo: "Admin", status: "Desativado" }
 ];

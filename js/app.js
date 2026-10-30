@@ -52,7 +52,7 @@
     let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a><a class="btn btn-primary" href="registro.html">Registrar</a>';
     if (mode === "user") extra = '<a class="btn btn-ghost" href="perfil.html">Maria Silva</a>';
     if (mode === "gestor") extra = '<a class="btn btn-ghost" href="minhas-unidades.html">Dra. Maria Silva</a>';
-    if (mode === "admin") extra = '<span class="chip">Admin</span><a class="btn btn-ghost" href="admin.html">Painel</a>';
+    if (mode === "admin") extra = '<span class="chip">Administrador</span><a class="btn btn-ghost" href="admin.html" aria-current="page">Painel</a>';
     return (
       '<header class="header"><div class="header-inner">' +
       brand("index.html") +
@@ -68,7 +68,7 @@
   }
 
   function footer() {
-    return '<footer class="footer"><div class="footer-inner"><div>© Web Saúde</div><div>Informações cadastradas pelos próprios estabelecimentos.</div></div></footer><div class="toast" role="status"></div>';
+    return '<footer class="footer"><div class="footer-inner"><div>© Web Saúde</div><div>Informações cadastradas pelos próprios estabelecimentos.</div></div></footer><div class="toast" role="status" aria-live="polite" aria-atomic="true"></div>';
   }
 
   function paginate(items, page, perPage) {
@@ -94,18 +94,18 @@
     let last = 0;
     for (let i = 1; i <= max; i++) {
       if (!set.has(i) || i < 1) continue;
-      if (last && i - last > 1) buttons.push("<span>…</span>");
-      buttons.push('<button type="button" data-page="' + i + '"' + (i === p.page ? ' class="is-active"' : "") + ">" + i + "</button>");
+      if (last && i - last > 1) buttons.push('<span aria-hidden="true">…</span>');
+      buttons.push('<button type="button" data-page="' + i + '"' + (i === p.page ? ' class="is-active" aria-current="page"' : "") + ' aria-label="Página ' + i + '">' + i + "</button>");
       last = i;
     }
     return (
-      '<div class="pager" data-pager>' +
-      "<span>Mostrando " + p.from + "–" + p.to + " de " + p.total + " " + (noun || "itens") + "</span>" +
+      '<nav class="pager" data-pager aria-label="Paginação">' +
+      "<p>Mostrando " + p.from + "–" + p.to + " de " + p.total + " " + (noun || "itens") + "</p>" +
       '<div class="pager-pages">' +
-      '<button type="button" data-page="' + (p.page - 1) + '"' + (p.page === 1 ? " disabled" : "") + ">Anterior</button>" +
+      '<button type="button" data-page="' + (p.page - 1) + '"' + (p.page === 1 ? " disabled" : "") + ' aria-label="Página anterior">Anterior</button>' +
       buttons.join("") +
-      '<button type="button" data-page="' + (p.page + 1) + '"' + (p.page === p.pages ? " disabled" : "") + ">Próximo</button>" +
-      "</div></div>"
+      '<button type="button" data-page="' + (p.page + 1) + '"' + (p.page === p.pages ? " disabled" : "") + ' aria-label="Próxima página">Próximo</button>' +
+      "</div></nav>"
     );
   }
 
@@ -173,6 +173,71 @@
     return { refresh: draw };
   }
 
+  function renderInfinite(opts) {
+    const root = document.querySelector(opts.target);
+    if (!root) return;
+    const PAGE = opts.perPage || 10;
+    let shown = PAGE;
+    let observer = null;
+    const sentinel = document.createElement(opts.sentinel || "div");
+    sentinel.className = "infinite-sentinel";
+    sentinel.setAttribute("aria-hidden", "true");
+    if (opts.sentinel === "tr") {
+      sentinel.innerHTML = '<td colspan="' + (opts.colspan || 4) + '"></td>';
+    }
+
+    function allItems() {
+      return typeof opts.items === "function" ? opts.items() : opts.items;
+    }
+
+    function scroller() {
+      var el = null;
+      if (opts.root === "self") el = root;
+      else if (typeof opts.root === "string") el = document.querySelector(opts.root);
+      else el = opts.root || null;
+      if (!el) return null;
+      if (el.scrollHeight <= el.clientHeight + 4) return null;
+      return el;
+    }
+
+    function watch(hasMore) {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      if (!hasMore) return;
+      observer = new IntersectionObserver(function (entries) {
+        if (entries[0] && entries[0].isIntersecting) {
+          shown += PAGE;
+          draw();
+        }
+      }, { root: scroller(), rootMargin: "80px" });
+      observer.observe(sentinel);
+    }
+
+    function draw(reset) {
+      if (reset) shown = PAGE;
+      const all = allItems();
+      const slice = all.slice(0, shown);
+      const hasMore = shown < all.length;
+      const box = scroller() || root;
+      const top = box.scrollTop;
+      if (!slice.length) {
+        root.innerHTML = (typeof opts.empty === "function" ? opts.empty() : opts.empty) || '<p class="center-note">Nenhum item.</p>';
+      } else {
+        root.innerHTML = slice.map(opts.render).join("");
+        if (hasMore) root.appendChild(sentinel);
+      }
+      box.scrollTop = top;
+      if (opts.onMeta) opts.onMeta(slice.length, all.length, hasMore);
+      if (opts.bind) opts.bind(root);
+      watch(hasMore);
+    }
+
+    draw(true);
+    return { refresh: function () { draw(true); } };
+  }
+
   document.addEventListener("click", function (e) {
     const toggle = e.target.closest(".nav-toggle");
     if (toggle) {
@@ -205,7 +270,9 @@
     unitCard: unitCard,
     unitRow: unitRow,
     bindFavs: bindFavs,
-    renderList: renderList
+    bindPager: bindPager,
+    renderList: renderList,
+    renderInfinite: renderInfinite
   };
 
   document.querySelectorAll("[data-header]").forEach(function (el) {

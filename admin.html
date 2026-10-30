@@ -3,81 +3,804 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Saúde — Painel admin</title>
+  <title>Web Saúde — Painel administrativo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="page">
-    <div data-header="Início" data-mode="admin"></div>
-    <main class="wrap admin">
-      <aside class="card side-nav" style="padding:16px;align-content:start">
-        <a class="is-active" href="#dash">Dashboard</a>
+    <div data-header="Painel" data-mode="admin"></div>
+    <main id="conteudo" class="wrap admin">
+      <nav class="card side-nav admin-nav" aria-label="Seções do painel">
+        <a href="#dash">Indicadores</a>
         <a href="#pendentes">Aprovar unidades</a>
         <a href="#usuarios">Gerenciar usuários</a>
-      </aside>
-      <div>
-        <div class="kpis">
-          <article class="card kpi"><span>Total de unidades</span><b>248</b></article>
-          <article class="card kpi"><span>Total de usuários</span><b>1.842</b></article>
-          <article class="card kpi"><span>Unidades pendentes</span><b>7</b></article>
-          <article class="card kpi"><span>Avaliações recentes</span><b>36</b></article>
-        </div>
-        <section id="pendentes" style="margin-top:22px">
-          <h2 class="section-title">Pendentes de aprovação</h2>
-          <div class="card" id="lista-pendentes"></div>
-        </section>
-        <section id="usuarios" style="margin-top:22px">
-          <div class="toolbar">
-            <h2 class="section-title" style="margin:0">Usuários</h2>
-            <input class="input" id="buscaUser" placeholder="Buscar usuários..." style="max-width:260px">
+        <a href="#acoes">Últimas ações</a>
+      </nav>
+
+      <div class="admin-main">
+        <header class="admin-head">
+          <p class="admin-kicker">Administração</p>
+          <h1>Painel administrativo</h1>
+          <p>Aprove unidades, gerencie usuários e acompanhe os indicadores da plataforma.</p>
+        </header>
+
+        <section id="dash" class="admin-section" aria-labelledby="dash-title">
+          <h2 id="dash-title" class="section-title">Visão geral</h2>
+          <div class="kpis">
+            <article class="card kpi">
+              <p class="kpi-label">Total de unidades</p>
+              <p class="kpi-value" id="kpi-unidades">0</p>
+              <p class="kpi-hint" id="kpi-unidades-hint"></p>
+            </article>
+            <a class="card kpi" href="#usuarios">
+              <p class="kpi-label">Total de usuários</p>
+              <p class="kpi-value" id="kpi-usuarios">0</p>
+              <p class="kpi-hint" id="kpi-usuarios-hint"></p>
+            </a>
+            <a class="card kpi kpi-warn" href="#pendentes">
+              <p class="kpi-label">Unidades pendentes</p>
+              <p class="kpi-value" id="kpi-pendentes">0</p>
+              <p class="kpi-hint">Aguardando revisão</p>
+            </a>
+            <article class="card kpi">
+              <p class="kpi-label">Avaliações recentes</p>
+              <p class="kpi-value" id="kpi-avaliacoes">0</p>
+              <p class="kpi-hint">Últimas publicadas</p>
+            </article>
           </div>
-          <div class="card" id="lista-users"></div>
+          <div class="charts">
+            <article class="card chart-card">
+              <div>
+                <h3>Situação das unidades</h3>
+                <p class="chart-hint">Clique para filtrar a fila</p>
+              </div>
+              <div class="chart-body" id="chart-unidades"></div>
+            </article>
+            <article class="card chart-card">
+              <div>
+                <h3>Usuários ativos</h3>
+                <p class="chart-hint">Clique para filtrar a lista</p>
+              </div>
+              <div class="chart-body" id="chart-status"></div>
+            </article>
+            <article class="card chart-card">
+              <div>
+                <h3>Perfis na plataforma</h3>
+                <p class="chart-hint">Clique para filtrar por perfil</p>
+              </div>
+              <div class="chart-body" id="chart-papeis"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="pendentes" class="admin-section" aria-labelledby="pendentes-title">
+          <div class="toolbar">
+            <h2 id="pendentes-title" class="section-title toolbar-title">Pendentes de aprovação</h2>
+          </div>
+          <div class="card filter-bar filter-bar-simple">
+            <label class="field filter-search">
+              <span>Buscar unidade</span>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <input class="input" id="buscaUnidade" type="search" placeholder="Nome, cidade, especialidade ou gestor" autocomplete="off">
+              </span>
+            </label>
+            <div class="filter-bar-side">
+              <p class="filter-meta" id="meta-pendentes"></p>
+              <button class="btn btn-ghost btn-sm" type="button" id="resetUnidades" hidden>Ver fila de pendentes</button>
+            </div>
+          </div>
+          <div class="card table-wrap">
+            <table class="admin-table admin-table-pending">
+              <caption class="sr-only" id="cap-pendentes">Unidades aguardando aprovação do administrador</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Unidade</th>
+                  <th scope="col">Gestor</th>
+                  <th scope="col">Enviada em</th>
+                  <th scope="col"><span class="sr-only">Ações</span></th>
+                </tr>
+              </thead>
+              <tbody id="lista-pendentes"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="usuarios" class="admin-section" aria-labelledby="usuarios-title">
+          <div class="toolbar">
+            <h2 id="usuarios-title" class="section-title toolbar-title">Usuários</h2>
+          </div>
+          <div class="card filter-bar">
+            <label class="field filter-search">
+              <span>Buscar usuário</span>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <input class="input" id="buscaUser" type="search" placeholder="Nome ou e-mail" autocomplete="off">
+              </span>
+            </label>
+            <fieldset class="filter-pills">
+              <legend>Status</legend>
+              <label><input type="radio" name="filtroStatus" value="" checked><span>Todos <b id="n-todos">0</b></span></label>
+              <label><input type="radio" name="filtroStatus" value="Ativo"><span>Ativos <b id="n-ativos">0</b></span></label>
+              <label><input type="radio" name="filtroStatus" value="Desativado"><span>Inativos <b id="n-inativos">0</b></span></label>
+            </fieldset>
+            <label class="field filter-select">
+              <span>Perfil</span>
+              <select class="select" id="filtroPapel">
+                <option value="">Todos os perfis</option>
+                <option value="Admin">Administrador</option>
+                <option value="Functional">Gestor</option>
+                <option value="Common">Paciente</option>
+              </select>
+            </label>
+            <div class="filter-bar-foot">
+              <p class="filter-meta" id="meta-users"></p>
+              <button class="btn btn-ghost btn-sm" type="button" id="limparFiltros">Limpar filtros</button>
+            </div>
+          </div>
+          <div class="card admin-list">
+            <div class="admin-list-scroll" id="users-scroll">
+              <table class="admin-table admin-table-users">
+                <caption class="sr-only">Lista de usuários da plataforma</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Usuário</th>
+                    <th scope="col">Perfil</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="lista-users"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="acoes" class="admin-section" aria-labelledby="acoes-title">
+          <h2 id="acoes-title" class="section-title">Últimas ações</h2>
+          <div class="card activity-card">
+            <ol class="activity-list" id="lista-acoes" aria-live="polite"></ol>
+          </div>
         </section>
       </div>
     </main>
     <div data-footer></div>
   </div>
+
+  <dialog class="dialog" id="dlg-confirm" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+    <div class="dialog-card">
+      <h2 id="confirm-title">Confirmar ação</h2>
+      <p id="confirm-text"></p>
+      <label class="field" id="confirm-motivo-wrap" hidden>
+        <span id="confirm-motivo-label">Motivo</span>
+        <textarea class="textarea" id="confirm-motivo" maxlength="280" rows="3" placeholder="Descreva o motivo"></textarea>
+        <span class="field-error" id="confirm-error" hidden>Informe o motivo para continuar.</span>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-ghost" type="button" id="confirm-cancel">Cancelar</button>
+        <button class="btn btn-primary btn-danger-solid" type="button" id="confirm-ok">Confirmar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="dialog" id="dlg-user" aria-labelledby="user-title">
+    <form class="dialog-card" id="form-user">
+      <h2 id="user-title">Usuário</h2>
+      <input type="hidden" name="userId">
+      <label class="field"><span>Nome</span><input class="input" name="nome" required maxlength="80"></label>
+      <label class="field"><span>E-mail</span><input class="input" type="email" name="email" required></label>
+      <label class="field"><span>Perfil</span>
+        <select class="select" name="tipo">
+          <option value="Admin">Administrador</option>
+          <option value="Functional">Gestor</option>
+          <option value="Common">Paciente</option>
+        </select>
+      </label>
+      <label class="field"><span>Status</span>
+        <select class="select" name="status">
+          <option>Ativo</option>
+          <option>Desativado</option>
+        </select>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-ghost" type="button" id="user-cancel">Fechar</button>
+        <button class="btn btn-primary" type="submit" id="user-save">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    var pendentes = WebSaude.unidades.filter(function (u) { return u.aprovacao === "Pendente"; });
-    if (pendentes.length < 3) pendentes = WebSaude.unidades.slice(0, 7).map(function (u, i) {
-      return Object.assign({}, u, { aprovacao: "Pendente", gestor: ["Dr. Roberto", "Ana Lima", "Carlos Gomes"][i % 3], data: (10 + i) + "/10/2023" });
-    });
-    WebSaude.ui.renderList({
-      target: "#lista-pendentes",
-      items: pendentes,
-      perPage: 3,
-      noun: "pendentes",
-      render: function (u) {
-        return '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.6fr;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center">' +
-          "<div><b>" + u.nome + "</b></div><div>" + (u.gestor || "Gestor") + "</div><div>" + (u.data || "10/10/2023") + "</div>" +
-          '<div class="row-actions"><button type="button" data-ok>Aprovar</button><button class="danger" type="button">Rejeitar</button><a href="detalhes.html?id=' + u.id + '">Ver detalhes</a></div></div>';
-      }
-    });
-    function users() {
-      var q = document.getElementById("buscaUser").value.toLowerCase();
-      return WebSaude.usuarios.filter(function (u) { return (u.nome + u.email + u.tipo).toLowerCase().indexOf(q) >= 0; });
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
     }
-    var userView = WebSaude.ui.renderList({
+
+    function iniciais(nome) {
+      return nome.split(" ").filter(Boolean).slice(0, 2).map(function (p) { return p[0]; }).join("").toUpperCase();
+    }
+
+    var PAPEL = { Admin: "Administrador", Functional: "Gestor", Common: "Paciente" };
+    var GESTOR = { 2: "Dra. Maria Silva", 8: "Dr. Roberto Dias", 11: "Ana Lima" };
+    var DATA = { 2: "12/10/2023", 8: "14/10/2023", 11: "18/10/2023" };
+
+    var listaUnidades = WebSaude.unidades.map(function (u) {
+      return Object.assign({}, u, {
+        gestor: GESTOR[u.id] || "Gestor responsável",
+        dataEnvio: DATA[u.id] || "10/10/2023"
+      });
+    });
+    var listaUsuarios = WebSaude.usuarios.map(function (u) { return Object.assign({}, u); });
+    [
+      ["Ana Lima", "Common", "Ativo"],
+      ["Pedro Rocha", "Functional", "Ativo"],
+      ["Camila Borges", "Common", "Ativo"],
+      ["Diego Martins", "Common", "Desativado"],
+      ["Elisa Prado", "Functional", "Ativo"],
+      ["Fábio Cunha", "Common", "Ativo"],
+      ["Gisele Ramos", "Admin", "Ativo"],
+      ["Henrique Lopes", "Common", "Desativado"],
+      ["Isabela Freitas", "Functional", "Ativo"],
+      ["Juliana Castro", "Common", "Ativo"],
+      ["Kleber Souza", "Common", "Ativo"],
+      ["Larissa Melo", "Functional", "Desativado"],
+      ["Marcelo Pinto", "Common", "Ativo"],
+      ["Natália Vieira", "Common", "Ativo"],
+      ["Otávio Reis", "Functional", "Ativo"],
+      ["Paula Andrade", "Common", "Desativado"],
+      ["Renato Barbosa", "Admin", "Ativo"],
+      ["Sabrina Teixeira", "Common", "Ativo"],
+      ["Thiago Moreira", "Functional", "Ativo"],
+      ["Vanessa Cardoso", "Common", "Ativo"]
+    ].forEach(function (item, i) {
+      var slug = item[0].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ".");
+      listaUsuarios.push({ id: 100 + i, nome: item[0], email: slug + "@exemplo.com", tipo: item[1], status: item[2] });
+    });
+
+    var pendingAction = null;
+    var pendingNeedsMotivo = false;
+    var filtroUnidade = "Pendente";
+    var TITULO_UNIDADE = {
+      Pendente: "Pendentes de aprovação",
+      Aprovado: "Unidades publicadas",
+      Rejeitado: "Unidades rejeitadas",
+      Rascunho: "Rascunhos"
+    };
+    var historico = [
+      { at: Date.now() - 8 * 60 * 1000, tipo: "aprovacao", titulo: "Aprovou Hospital Santa Helena", motivo: "" },
+      { at: Date.now() - 42 * 60 * 1000, tipo: "desativar", titulo: "Desativou Fernanda Costa", motivo: "Conta duplicada reportada pelo suporte." },
+      { at: Date.now() - 3 * 60 * 60 * 1000, tipo: "rejeicao", titulo: "Rejeitou Clínica Horizonte", motivo: "CNPJ e endereço não conferem com o cadastro." },
+      { at: Date.now() - 26 * 60 * 60 * 1000, tipo: "ativar", titulo: "Ativou João Mendes", motivo: "" },
+      { at: Date.now() - 2 * 24 * 60 * 60 * 1000, tipo: "aprovacao", titulo: "Aprovou Instituto Vida", motivo: "" }
+    ];
+
+    function situacaoUnidade(u) {
+      if (u.aprovacao === "Pendente" || u.aprovacao === "Aprovado" || u.aprovacao === "Rejeitado") return u.aprovacao;
+      return "Rascunho";
+    }
+
+    function pendentes() {
+      var q = document.getElementById("buscaUnidade").value.trim().toLowerCase();
+      return listaUnidades.filter(function (u) {
+        if (situacaoUnidade(u) !== filtroUnidade) return false;
+        if (!q) return true;
+        var specs = (u.especialidades || []).join(" ");
+        return (u.nome + " " + u.tipo + " " + u.gestor + " " + u.cidade + " " + u.estado + " " + specs).toLowerCase().indexOf(q) >= 0;
+      });
+    }
+
+    function statusFiltro() {
+      var el = document.querySelector('input[name="filtroStatus"]:checked');
+      return el ? el.value : "";
+    }
+
+    function usuariosFiltrados() {
+      var q = document.getElementById("buscaUser").value.trim().toLowerCase();
+      var status = statusFiltro();
+      var papel = document.getElementById("filtroPapel").value;
+      return listaUsuarios.filter(function (u) {
+        if (status && u.status !== status) return false;
+        if (papel && u.tipo !== papel) return false;
+        if (q && (u.nome + " " + u.email + " " + (PAPEL[u.tipo] || u.tipo)).toLowerCase().indexOf(q) < 0) return false;
+        return true;
+      });
+    }
+
+    function temFiltroUser() {
+      return !!(document.getElementById("buscaUser").value.trim() || statusFiltro() || document.getElementById("filtroPapel").value);
+    }
+
+    function contar(lista, chave, valor) {
+      return lista.filter(function (item) { return item[chave] === valor; }).length;
+    }
+
+    function filtroChart(p) {
+      var f = { go: p.go };
+      if (p.unit) f.unit = p.unit;
+      if (p.status) f.status = p.status;
+      if (p.papel) f.papel = p.papel;
+      return esc(JSON.stringify(f));
+    }
+
+    function parteAtiva(p) {
+      if (p.unit) return filtroUnidade === p.unit;
+      if (p.status) return statusFiltro() === p.status;
+      if (p.papel) return document.getElementById("filtroPapel").value === p.papel;
+      return false;
+    }
+
+    function donut(parts, cap) {
+      var total = parts.reduce(function (s, p) { return s + p.value; }, 0);
+      var r = 38;
+      var circ = 2 * Math.PI * r;
+      var gap = parts.length > 1 ? 5 : 0;
+      var acc = 0;
+      var rings = parts.map(function (p) {
+        var raw = total ? (p.value / total) * circ : 0;
+        var len = Math.max(0, raw - gap);
+        var ring = '<circle class="donut-seg" cx="50" cy="50" r="' + r + '" fill="none" stroke="' + p.color + '" stroke-width="11" stroke-linecap="round" stroke-dasharray="' + len.toFixed(2) + " " + circ.toFixed(2) + '" stroke-dashoffset="' + (-acc).toFixed(2) + '" transform="rotate(-90 50 50)"/>';
+        acc += raw;
+        return ring;
+      }).join("");
+      var legend = '<ul class="chart-legend">' + parts.map(function (p) {
+        var pct = total ? Math.round((p.value / total) * 100) : 0;
+        var on = parteAtiva(p);
+        var inner = '<span class="swatch" style="background:' + p.color + '"></span>' +
+          '<span class="leg-copy"><span class="leg-label">' + esc(p.label) + '</span><span class="leg-pct">' + pct + "%</span></span>" +
+          "<b>" + p.value + "</b>";
+        return '<li><button type="button" class="chart-hit' + (on ? " is-active" : "") + '" data-chart-filter="' + filtroChart(p) + '" aria-pressed="' + (on ? "true" : "false") + '">' + inner + "</button></li>";
+      }).join("") + "</ul>";
+      return '<div class="donut-wrap">' +
+        '<div class="donut-ring">' +
+        '<svg viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle class="donut-track" cx="50" cy="50" r="' + r + '" fill="none" stroke-width="11"/>' +
+        rings + "</svg>" +
+        '<div class="donut-center"><strong>' + total + "</strong><span>" + esc(cap) + "</span></div>" +
+        "</div>" + legend + "</div>";
+    }
+
+    function barras(parts) {
+      var max = Math.max.apply(null, parts.map(function (p) { return p.value; }).concat([1]));
+      var total = parts.reduce(function (s, p) { return s + p.value; }, 0);
+      return '<ul class="bar-chart">' + parts.map(function (p) {
+        var pct = Math.round((p.value / max) * 100);
+        var share = total ? Math.round((p.value / total) * 100) : 0;
+        var on = parteAtiva(p);
+        return '<li><button type="button" class="bar-hit' + (on ? " is-active" : "") + '" data-chart-filter="' + filtroChart(p) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+          '<div class="bar-head"><span class="bar-label">' + esc(p.label) + '</span><span class="bar-meta"><b>' + p.value + "</b> · " + share + "%</span></div>" +
+          '<span class="bar-track"><span class="bar-fill" style="width:' + pct + "%;background:" + p.color + '"></span></span></button></li>';
+      }).join("") + "</ul>";
+    }
+
+    function atualizarKpis() {
+      var ativos = contar(listaUsuarios, "status", "Ativo");
+      var inativos = listaUsuarios.length - ativos;
+      var nPend = contar(listaUnidades, "aprovacao", "Pendente");
+      var nAprov = contar(listaUnidades, "aprovacao", "Aprovado");
+      var nRej = contar(listaUnidades, "aprovacao", "Rejeitado");
+      var nRasc = listaUnidades.length - nPend - nAprov - nRej;
+      document.getElementById("kpi-unidades").textContent = String(listaUnidades.length);
+      document.getElementById("kpi-unidades-hint").textContent = nPend ? nPend + " para revisar" : "Nenhuma pendência";
+      document.getElementById("kpi-usuarios").textContent = String(listaUsuarios.length);
+      document.getElementById("kpi-usuarios-hint").textContent = ativos + " ativos · " + inativos + " inativos";
+      document.getElementById("kpi-pendentes").textContent = String(nPend);
+      document.getElementById("kpi-avaliacoes").textContent = String(WebSaude.avaliacoes.length);
+      document.getElementById("n-todos").textContent = String(listaUsuarios.length);
+      document.getElementById("n-ativos").textContent = String(ativos);
+      document.getElementById("n-inativos").textContent = String(inativos);
+      document.getElementById("chart-unidades").innerHTML = donut([
+        { label: "Publicadas", value: nAprov, color: "#0f766e", go: "#pendentes", unit: "Aprovado" },
+        { label: "Pendentes", value: nPend, color: "#f59e0b", go: "#pendentes", unit: "Pendente" },
+        { label: "Rejeitadas", value: nRej, color: "#fb7185", go: "#pendentes", unit: "Rejeitado" },
+        { label: "Rascunho", value: nRasc, color: "#cbd5e1", go: "#pendentes", unit: "Rascunho" }
+      ].filter(function (p) { return p.value > 0; }), "unidades");
+      document.getElementById("chart-status").innerHTML = donut([
+        { label: "Ativos", value: ativos, color: "#0f766e", go: "#usuarios", status: "Ativo" },
+        { label: "Inativos", value: inativos, color: "#99f6e4", go: "#usuarios", status: "Desativado" }
+      ], "usuários");
+      document.getElementById("chart-papeis").innerHTML = barras([
+        { label: "Administrador", value: contar(listaUsuarios, "tipo", "Admin"), color: "#115e59", go: "#usuarios", papel: "Admin" },
+        { label: "Gestor", value: contar(listaUsuarios, "tipo", "Functional"), color: "#0f766e", go: "#usuarios", papel: "Functional" },
+        { label: "Paciente", value: contar(listaUsuarios, "tipo", "Common"), color: "#5eead4", go: "#usuarios", papel: "Common" }
+      ]);
+    }
+
+    function especialidadesHtml(u) {
+      var list = u.especialidades || [];
+      var extra = list.length > 2 ? list.length - 2 : 0;
+      var chips = list.slice(0, 2).map(function (s) {
+        return '<span class="chip">' + esc(s) + "</span>";
+      }).join("");
+      if (extra) chips += '<span class="chip chip-muted">+' + extra + "</span>";
+      return chips ? '<div class="unit-tags">' + chips + "</div>" : "";
+    }
+
+    function haQuanto(ts) {
+      var s = Math.round((Date.now() - ts) / 1000);
+      if (s < 45) return "agora";
+      var m = Math.round(s / 60);
+      if (m < 60) return "há " + m + " min";
+      var h = Math.round(m / 60);
+      if (h < 24) return "há " + h + " h";
+      var d = Math.round(h / 24);
+      return d === 1 ? "há 1 dia" : "há " + d + " dias";
+    }
+
+    function pontoAcao(tipo) {
+      if (tipo === "aprovacao" || tipo === "ativar") return "is-ok";
+      if (tipo === "rejeicao") return "is-danger";
+      if (tipo === "desativar") return "is-warn";
+      return "is-muted";
+    }
+
+    function registrarAcao(tipo, titulo, motivo) {
+      historico.unshift({ at: Date.now(), tipo: tipo, titulo: titulo, motivo: motivo || "" });
+      if (historico.length > 20) historico.length = 20;
+      drawHistorico();
+    }
+
+    function drawHistorico() {
+      var el = document.getElementById("lista-acoes");
+      if (!historico.length) {
+        el.innerHTML = '<li class="activity-item"><div></div><p class="admin-empty">Nenhuma ação registrada ainda.</p></li>';
+        return;
+      }
+      el.innerHTML = historico.map(function (a) {
+        return '<li class="activity-item">' +
+          '<span class="activity-dot ' + pontoAcao(a.tipo) + '" aria-hidden="true"></span>' +
+          "<div><p class=\"activity-title\">" + esc(a.titulo) + "</p>" +
+          (a.motivo ? '<p class="activity-motivo">Motivo: ' + esc(a.motivo) + "</p>" : "") +
+          "</div>" +
+          '<time class="activity-time" datetime="' + new Date(a.at).toISOString() + '">' + haQuanto(a.at) + "</time></li>";
+      }).join("");
+    }
+
+    function irPara(hash) {
+      var el = document.querySelector(hash);
+      if (location.hash !== hash) location.hash = hash;
+      else marcarNav();
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        var title = el.querySelector("h2");
+        if (title) {
+          title.setAttribute("tabindex", "-1");
+          title.focus({ preventScroll: true });
+        }
+      }
+    }
+
+    function aplicarFiltroGrafico(f) {
+      if (f.unit) {
+        filtroUnidade = f.unit;
+        drawPendentes();
+        atualizarKpis();
+        irPara(f.go || "#pendentes");
+        return;
+      }
+      if (f.status !== undefined) {
+        var st = document.querySelector('input[name="filtroStatus"][value="' + f.status + '"]');
+        if (st) st.checked = true;
+        document.getElementById("filtroPapel").value = "";
+      }
+      if (f.papel !== undefined) {
+        document.getElementById("filtroPapel").value = f.papel;
+        document.querySelector('input[name="filtroStatus"][value=""]').checked = true;
+      }
+      usersView.refresh();
+      atualizarKpis();
+      irPara(f.go || "#usuarios");
+    }
+
+    function drawPendentes() {
+      var lista = pendentes();
+      var tbody = document.getElementById("lista-pendentes");
+      var q = document.getElementById("buscaUnidade").value.trim();
+      var titulo = TITULO_UNIDADE[filtroUnidade] || "Unidades";
+      var vazio = q
+        ? "Nenhuma unidade corresponde à busca."
+        : (filtroUnidade === "Pendente" ? "Nenhuma unidade pendente de aprovação." : "Nenhuma unidade neste filtro.");
+      document.getElementById("pendentes-title").textContent = titulo;
+      document.getElementById("cap-pendentes").textContent = titulo;
+      document.getElementById("resetUnidades").hidden = filtroUnidade === "Pendente";
+      document.getElementById("meta-pendentes").textContent = lista.length
+        ? lista.length + (lista.length === 1 ? " unidade encontrada" : " unidades encontradas")
+        : vazio;
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="4"><p class="admin-empty">' + vazio + "</p></td></tr>";
+        return;
+      }
+      tbody.innerHTML = lista.map(function (u) {
+        var local = [u.cidade, u.estado].filter(Boolean).join(", ");
+        var acoes = filtroUnidade === "Pendente"
+          ? '<button class="btn btn-primary btn-sm" type="button" data-approve="' + u.id + '">Aprovar</button>' +
+            '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-reject="' + u.id + '">Rejeitar</button>'
+          : "";
+        return "<tr>" +
+          '<th scope="row"><div class="unit-cell"><img src="' + esc(u.foto) + '" alt="">' +
+          "<div><div>" + esc(u.nome) + "</div><small>" + esc(local) + (u.tipo ? " · " + esc(u.tipo) : "") + "</small>" +
+          especialidadesHtml(u) + "</div></div></th>" +
+          '<td data-label="Gestor">' + esc(u.gestor) + "</td>" +
+          '<td data-label="Enviada em">' + esc(u.dataEnvio) + "</td>" +
+          '<td><div class="row-actions">' + acoes +
+          '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver detalhes</a>' +
+          "</div></td></tr>";
+      }).join("");
+    }
+
+    function linhaUsuario(u) {
+      var ativo = u.status === "Ativo";
+      return "<tr>" +
+        '<th scope="row"><div class="user-cell"><span class="user-avatar" aria-hidden="true">' + esc(iniciais(u.nome)) + "</span>" +
+        "<div><div>" + esc(u.nome) + "</div><small>" + esc(u.email) + "</small></div></div></th>" +
+        '<td data-label="Perfil"><span class="chip">' + esc(PAPEL[u.tipo] || u.tipo) + "</span></td>" +
+        '<td data-label="Status"><span class="chip ' + (ativo ? "chip-ok" : "chip-muted") + '">' + (ativo ? "Ativo" : "Inativo") + "</span></td>" +
+        '<td><div class="row-actions">' +
+        '<button class="btn btn-ghost btn-sm" type="button" data-view="' + u.id + '">Ver</button>' +
+        '<button class="btn btn-ghost btn-sm" type="button" data-edit="' + u.id + '">Editar</button>' +
+        '<button class="btn btn-ghost btn-sm ' + (ativo ? "btn-danger" : "") + '" type="button" data-toggle="' + u.id + '">' +
+        (ativo ? "Desativar" : "Ativar") + "</button>" +
+        "</div></td></tr>";
+    }
+
+    function vazioUsuarios() {
+      var status = statusFiltro();
+      if (status === "Ativo") return "Nenhum usuário ativo com esses filtros.";
+      if (status === "Desativado") return "Nenhum usuário inativo com esses filtros.";
+      return "Nenhum usuário encontrado.";
+    }
+
+    var usersView = WebSaude.ui.renderInfinite({
       target: "#lista-users",
-      items: users,
-      perPage: 3,
-      noun: "usuários",
-      render: function (u) {
-        return '<div style="display:grid;grid-template-columns:1.3fr 1.5fr 1fr 1fr 1.2fr;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center">' +
-          "<div><b>" + u.nome + "</b></div><div>" + u.email + '</div><div><span class="chip">' + u.tipo + "</span></div>" +
-          '<div><span class="chip ' + (u.status === "Ativo" ? "chip-ok" : "chip-muted") + '">' + u.status + "</span></div>" +
-          '<div class="row-actions"><button type="button">Ver</button><button type="button">Editar</button><button class="danger" type="button">Desativar</button></div></div>';
+      root: "#users-scroll",
+      sentinel: "tr",
+      colspan: 4,
+      perPage: 10,
+      items: usuariosFiltrados,
+      render: linhaUsuario,
+      empty: function () {
+        return '<tr><td colspan="4"><p class="admin-empty">' + vazioUsuarios() + "</p></td></tr>";
+      },
+      onMeta: function (shown, total, hasMore) {
+        var vazio = vazioUsuarios();
+        document.getElementById("meta-users").textContent = total
+          ? (hasMore ? "Mostrando " + shown + " de " + total + " usuários · continue rolando" : total + (total === 1 ? " usuário" : " usuários"))
+          : vazio;
+        document.getElementById("limparFiltros").hidden = !temFiltroUser();
       }
     });
-    document.getElementById("buscaUser").oninput = userView.refresh;
-    document.getElementById("lista-pendentes").addEventListener("click", function (e) {
-      if (e.target.hasAttribute("data-ok")) WebSaude.ui.toast("Unidade aprovada.");
-      if (e.target.classList.contains("danger")) WebSaude.ui.toast("Unidade rejeitada.");
+
+    function refresh() {
+      atualizarKpis();
+      drawPendentes();
+      drawHistorico();
+      usersView.refresh();
+    }
+
+    function unidadePorId(id) {
+      return listaUnidades.filter(function (u) { return u.id === id; })[0];
+    }
+    function usuarioPorId(id) {
+      return listaUsuarios.filter(function (u) { return u.id === id; })[0];
+    }
+
+    function confirmar(opts) {
+      document.getElementById("confirm-title").textContent = opts.titulo;
+      document.getElementById("confirm-text").textContent = opts.texto;
+      document.getElementById("confirm-ok").textContent = opts.rotulo;
+      var wrap = document.getElementById("confirm-motivo-wrap");
+      var ta = document.getElementById("confirm-motivo");
+      var err = document.getElementById("confirm-error");
+      pendingNeedsMotivo = !!opts.motivo;
+      wrap.hidden = !pendingNeedsMotivo;
+      err.hidden = true;
+      ta.value = "";
+      ta.setAttribute("aria-required", pendingNeedsMotivo ? "true" : "false");
+      document.getElementById("confirm-motivo-label").textContent = opts.motivoLabel || "Motivo";
+      ta.placeholder = opts.motivoPlaceholder || "Descreva o motivo";
+      pendingAction = opts.onOk;
+      document.getElementById("confirm-ok").classList.toggle("btn-danger-solid", !!opts.motivo);
+      var dlg = document.getElementById("dlg-confirm");
+      dlg.returnValue = "";
+      dlg.showModal();
+      if (pendingNeedsMotivo) ta.focus();
+      else document.getElementById("confirm-ok").focus();
+    }
+
+    function abrirUsuario(id, modo) {
+      var u = usuarioPorId(id);
+      if (!u) return;
+      var form = document.getElementById("form-user");
+      var leitura = modo === "ver";
+      form.elements.userId.value = u.id;
+      form.nome.value = u.nome;
+      form.email.value = u.email;
+      form.tipo.value = u.tipo;
+      form.status.value = u.status;
+      form.nome.disabled = leitura;
+      form.email.disabled = leitura;
+      form.tipo.disabled = leitura;
+      form.status.disabled = leitura;
+      document.getElementById("user-title").textContent = leitura ? "Dados do usuário" : "Editar usuário";
+      document.getElementById("user-save").hidden = leitura;
+      document.getElementById("user-cancel").textContent = leitura ? "Fechar" : "Cancelar";
+      document.getElementById("dlg-user").showModal();
+      if (!leitura) form.nome.focus();
+    }
+
+    document.getElementById("confirm-ok").addEventListener("click", function () {
+      if (pendingNeedsMotivo) {
+        var ta = document.getElementById("confirm-motivo");
+        if (!ta.value.trim()) {
+          document.getElementById("confirm-error").hidden = false;
+          ta.focus();
+          return;
+        }
+      }
+      document.getElementById("dlg-confirm").close("ok");
     });
+    document.getElementById("confirm-cancel").addEventListener("click", function () {
+      document.getElementById("dlg-confirm").close("cancel");
+    });
+    document.getElementById("confirm-motivo").addEventListener("input", function () {
+      if (this.value.trim()) document.getElementById("confirm-error").hidden = true;
+    });
+    document.getElementById("dlg-confirm").addEventListener("close", function () {
+      var run = this.returnValue === "ok" ? pendingAction : null;
+      var motivo = document.getElementById("confirm-motivo").value.trim();
+      pendingAction = null;
+      pendingNeedsMotivo = false;
+      document.getElementById("confirm-error").hidden = true;
+      if (run) run(motivo);
+    });
+
+    document.getElementById("user-cancel").addEventListener("click", function () {
+      document.getElementById("dlg-user").close();
+    });
+
+    document.getElementById("form-user").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var id = Number(this.elements.userId.value);
+      var u = usuarioPorId(id);
+      if (!u) return;
+      u.nome = this.nome.value.trim();
+      u.email = this.email.value.trim();
+      u.tipo = this.tipo.value;
+      u.status = this.status.value;
+      document.getElementById("dlg-user").close();
+      WebSaude.ui.toast("Usuário atualizado.");
+      atualizarKpis();
+      usersView.refresh();
+    });
+
+    document.getElementById("lista-pendentes").addEventListener("click", function (e) {
+      var approve = e.target.closest("[data-approve]");
+      var reject = e.target.closest("[data-reject]");
+      if (approve) {
+        var u = unidadePorId(Number(approve.getAttribute("data-approve")));
+        if (!u) return;
+        u.aprovacao = "Aprovado";
+        u.status = "Publicado";
+        registrarAcao("aprovacao", "Aprovou " + u.nome);
+        WebSaude.ui.toast(u.nome + " aprovada.");
+        refresh();
+        return;
+      }
+      if (reject) {
+        var unidade = unidadePorId(Number(reject.getAttribute("data-reject")));
+        if (!unidade) return;
+        confirmar({
+          titulo: "Rejeitar unidade",
+          texto: "Rejeitar “" + unidade.nome + "”? O gestor verá o motivo e precisará revisar o cadastro.",
+          rotulo: "Rejeitar",
+          motivo: true,
+          motivoLabel: "Motivo da rejeição",
+          motivoPlaceholder: "Ex.: endereço incompleto, documentos ilegíveis…",
+          onOk: function (motivo) {
+            unidade.aprovacao = "Rejeitado";
+            unidade.motivoRejeicao = motivo;
+            registrarAcao("rejeicao", "Rejeitou " + unidade.nome, motivo);
+            WebSaude.ui.toast(unidade.nome + " rejeitada.");
+            refresh();
+          }
+        });
+      }
+    });
+
+    document.getElementById("lista-users").addEventListener("click", function (e) {
+      var view = e.target.closest("[data-view]");
+      var edit = e.target.closest("[data-edit]");
+      var toggle = e.target.closest("[data-toggle]");
+      if (view) abrirUsuario(Number(view.getAttribute("data-view")), "ver");
+      if (edit) abrirUsuario(Number(edit.getAttribute("data-edit")), "editar");
+      if (toggle) {
+        var user = usuarioPorId(Number(toggle.getAttribute("data-toggle")));
+        if (!user) return;
+        var desativar = user.status === "Ativo";
+        confirmar({
+          titulo: desativar ? "Desativar usuário" : "Ativar usuário",
+          texto: desativar
+            ? "Desativar “" + user.nome + "”? A conta deixa de acessar a plataforma."
+            : "Ativar “" + user.nome + "” novamente?",
+          rotulo: desativar ? "Desativar" : "Ativar",
+          motivo: desativar,
+          motivoLabel: "Motivo da desativação",
+          motivoPlaceholder: "Ex.: conta duplicada, solicitação do usuário…",
+          onOk: function (motivo) {
+            user.status = desativar ? "Desativado" : "Ativo";
+            user.motivoDesativacao = desativar ? motivo : "";
+            registrarAcao(desativar ? "desativar" : "ativar", (desativar ? "Desativou " : "Ativou ") + user.nome, motivo);
+            WebSaude.ui.toast(desativar ? "Usuário desativado." : "Usuário ativado.");
+            atualizarKpis();
+            usersView.refresh();
+            drawHistorico();
+          }
+        });
+      }
+    });
+
+    function onFiltroUser() {
+      usersView.refresh();
+      atualizarKpis();
+    }
+    document.getElementById("buscaUser").addEventListener("input", onFiltroUser);
+    document.getElementById("filtroPapel").addEventListener("change", onFiltroUser);
+    document.querySelectorAll('input[name="filtroStatus"]').forEach(function (el) {
+      el.addEventListener("change", onFiltroUser);
+    });
+    document.getElementById("buscaUnidade").addEventListener("input", function () {
+      drawPendentes();
+    });
+    document.getElementById("limparFiltros").addEventListener("click", function () {
+      document.getElementById("buscaUser").value = "";
+      document.getElementById("filtroPapel").value = "";
+      document.querySelector('input[name="filtroStatus"][value=""]').checked = true;
+      usersView.refresh();
+      atualizarKpis();
+      document.getElementById("buscaUser").focus();
+    });
+    document.getElementById("resetUnidades").addEventListener("click", function () {
+      filtroUnidade = "Pendente";
+      drawPendentes();
+      atualizarKpis();
+      document.getElementById("buscaUnidade").focus();
+    });
+    document.querySelector(".charts").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-chart-filter]");
+      if (!btn) return;
+      var f;
+      try { f = JSON.parse(btn.getAttribute("data-chart-filter")); } catch (err) { return; }
+      aplicarFiltroGrafico(f);
+    });
+    document.querySelector("a.kpi-warn").addEventListener("click", function () {
+      filtroUnidade = "Pendente";
+      drawPendentes();
+      atualizarKpis();
+    });
+    document.querySelector('.admin-nav a[href="#pendentes"]').addEventListener("click", function () {
+      filtroUnidade = "Pendente";
+      drawPendentes();
+      atualizarKpis();
+    });
+
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll(".admin-nav a"));
+    function marcarNav() {
+      var hash = location.hash || "#dash";
+      navLinks.forEach(function (a) {
+        var on = a.getAttribute("href") === hash;
+        a.classList.toggle("is-active", on);
+        if (on) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      });
+    }
+    window.addEventListener("hashchange", marcarNav);
+    marcarNav();
+
+    refresh();
   </script>
 </body>
 </html>

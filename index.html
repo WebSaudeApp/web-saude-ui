@@ -116,17 +116,16 @@
         '</div></article>';
     }
 
-    var lista = WebSaude.ui.renderList({
+    var lista = WebSaude.ui.renderInfinite({
       target: "#lista",
-      items: function () {
-        var r = filtrar();
-        document.getElementById("contagem").textContent = r.length + (r.length === 1 ? " estabelecimento encontrado" : " estabelecimentos encontrados");
-        return r;
-      },
-      perPage: 5,
-      noun: "estabelecimentos",
-      empty: "Nenhum estabelecimento encontrado.",
-      render: linha
+      root: "self",
+      perPage: 10,
+      empty: '<p class="center-note">Nenhum estabelecimento encontrado.</p>',
+      items: filtrar,
+      render: linha,
+      onMeta: function (shown, total) {
+        document.getElementById("contagem").textContent = total + (total === 1 ? " estabelecimento encontrado" : " estabelecimentos encontrados");
+      }
     });
 
     filtros.addEventListener("change", function () { lista.refresh(); });
