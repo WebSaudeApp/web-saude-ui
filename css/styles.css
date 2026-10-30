@@ -327,6 +327,10 @@ a.info-line:hover { color: var(--teal); }
 .otp { display: flex; justify-content: center; gap: 8px; }
 .otp input { width: 48px; height: 54px; text-align: center; font-size: 1.3rem; font-weight: 700; border: 1px solid var(--line); border-radius: 12px; }
 .center-note { text-align: center; color: var(--muted); font-size: 0.9rem; }
+.center-note a { color: var(--teal); font-weight: 700; }
+.center-note a:hover { color: var(--teal-dark); text-decoration: underline; }
+.link { color: var(--teal); font-weight: 600; font-size: 0.9rem; }
+.link:hover { color: var(--teal-dark); text-decoration: underline; }
 
 /* Account */
 .account { padding: 28px 0 48px; display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
