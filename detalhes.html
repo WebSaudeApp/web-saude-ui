@@ -17,38 +17,123 @@
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    var id = Number(WebSaude.ui.params().get("id") || 1);
-    var u = WebSaude.unidades.find(function (x) { return x.id === id; }) || WebSaude.unidades[0];
-    var fotos = [u.foto, WebSaude.unidades[1].foto, WebSaude.unidades[2].foto, WebSaude.unidades[3].foto];
-    document.title = "Web Saúde — " + u.nome;
-    document.getElementById("detalhe").innerHTML =
-      '<div class="details-title"><h1>' + u.nome + '</h1><span class="chip">' + u.tipo + '</span>' +
-      '<span class="chip chip-ok">' + (u.aberto ? "Aberto agora" : u.horario) + "</span>" +
-      '<button class="btn btn-ghost" data-fav="' + u.id + '" type="button">♥ Favoritar</button>' +
-      '<button class="btn btn-ghost" type="button" id="share">Compartilhar</button></div>' +
-      '<div class="gallery"><div><img class="gallery-main" id="foto" src="' + u.foto + '" alt="' + u.nome + '">' +
-      '<div class="thumbs">' + fotos.map(function (f, i) { return '<img src="' + f + '" data-src="' + f + '"' + (i === 0 ? ' class="is-on"' : "") + '>'; }).join("") + "</div></div>" +
-      '<div class="info-grid">' +
-      '<div class="card info-card"><div>' + u.endereco + ", " + u.cidade + "</div><div>☎ " + u.telefone + "</div><div>✉ " + u.email + "</div></div>" +
-      '<div class="card info-card"><b>Especialidades</b><div class="spec-grid">' + u.especialidades.map(function (s) { return '<span class="chip">' + s + "</span>"; }).join("") + "</div></div>" +
-      '<div class="card info-card"><b>Horários</b><div>Segunda a domingo: 08:00 – 22:00</div><div class="chip chip-ok">' + u.horario + "</div></div>" +
-      "</div></div>" +
-      '<section class="card info-card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
-      "<div><b>Avaliações</b><div style=\"font-size:2rem\">" + u.nota.toFixed(1) + "</div><div>" + u.avaliacoes + " avaliações</div></div>" +
-      '<a class="btn btn-primary" href="login.html">Deixar avaliação</a></div>' +
-      WebSaude.avaliacoes.map(function (a) {
-        return '<article class="review"><img class="avatar" src="' + a.foto + '" alt=""><div><b>' + a.nome + "</b><div>" + WebSaude.ui.stars(a.nota) + "</div><p>" + a.texto + "</p></div><span>" + a.data + "</span></article>";
-      }).join("") + "</section>";
-    WebSaude.ui.bindFavs(document.getElementById("detalhe"));
-    document.querySelector(".thumbs").addEventListener("click", function (e) {
-      if (!e.target.dataset.src) return;
-      document.getElementById("foto").src = e.target.dataset.src;
-      document.querySelectorAll(".thumbs img").forEach(function (img) { img.classList.toggle("is-on", img === e.target); });
-    });
-    document.getElementById("share").onclick = function () {
-      navigator.clipboard.writeText(location.href);
-      WebSaude.ui.toast("Link copiado.");
+    var root = document.getElementById("detalhe");
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    var ICON = {
+      pin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-10a6 6 0 0 1 12 0c0 4.4-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>',
+      phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>',
+      mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'
     };
+
+    var id = Number(WebSaude.ui.params().get("id"));
+    var u = WebSaude.unidades.find(function (x) { return x.id === id; });
+
+    if (!u) {
+      document.title = "Web Saúde — Unidade não encontrada";
+      root.innerHTML =
+        '<section class="card notfound"><h1>Unidade não encontrada</h1>' +
+        '<p class="center-note">Não encontramos a unidade que você procurou. Ela pode ter sido removida ou o link está incorreto.</p>' +
+        '<a class="btn btn-primary" href="index.html">Voltar para a busca</a></section>';
+    } else {
+      render(u);
+    }
+
+    function render(u) {
+      var fotos = u.fotos && u.fotos.length ? u.fotos : [u.foto];
+      var enderecoCompleto = u.endereco + ", " + u.cidade + (u.estado ? " – " + u.estado : "");
+      var telefone = String(u.telefone).replace(/[^\d+]/g, "");
+      var favOn = WebSaude.ui.favs().indexOf(u.id) >= 0 ? " is-on" : "";
+
+      document.title = "Web Saúde — " + u.nome;
+
+      var thumbs = fotos.length > 1
+        ? '<div class="thumbs">' + fotos.map(function (f, i) {
+            return '<button type="button" data-src="' + esc(f) + '" aria-label="Ver foto ' + (i + 1) + ' de ' + fotos.length + '"' + (i === 0 ? ' class="is-on"' : "") + '>' +
+              '<img src="' + esc(f) + '" alt="Foto ' + (i + 1) + ' de ' + esc(u.nome) + '"></button>';
+          }).join("") + "</div>"
+        : "";
+
+      root.innerHTML =
+        '<a class="det-back" href="index.html">← Voltar para a busca</a>' +
+        '<div class="details-title"><h1>' + esc(u.nome) + '</h1><span class="chip">' + esc(u.tipo) + "</span>" +
+        '<span class="chip ' + (u.aberto ? "chip-ok" : "chip-warn") + '">' + (u.aberto ? "Aberto agora" : esc(u.horario)) + "</span>" +
+        '<div class="details-actions">' +
+        '<button class="btn btn-ghost fav-btn' + favOn + '" data-fav="' + u.id + '" type="button"><span class="off">♡ Favoritar</span><span class="on">♥ Favoritado</span></button>' +
+        '<button class="btn btn-ghost" type="button" id="share">Compartilhar</button></div></div>' +
+        '<div class="quick-actions">' +
+        '<a class="btn btn-primary" href="tel:' + esc(telefone) + '">' + ICON.phone + 'Ligar</a></div>' +
+
+        '<div class="det-top">' +
+        '<div class="card det-gallery"><img class="gallery-main" id="foto" src="' + esc(fotos[0]) + '" alt="Foto de ' + esc(u.nome) + '">' + thumbs + "</div>" +
+        '<div class="info-grid">' +
+        '<div class="card info-card"><h2>Contato</h2>' +
+        '<div class="info-line">' + ICON.pin + "<span>" + esc(enderecoCompleto) + "</span></div>" +
+        '<a class="info-line" href="tel:' + esc(telefone) + '">' + ICON.phone + "<span>" + esc(u.telefone) + "</span></a>" +
+        '<a class="info-line" href="mailto:' + esc(u.email) + '">' + ICON.mail + "<span>" + esc(u.email) + "</span></a></div>" +
+        '<div class="card info-card"><h2>Especialidades</h2><div class="spec-grid">' +
+        u.especialidades.map(function (s) { return '<span class="chip">' + esc(s) + "</span>"; }).join("") + "</div></div>" +
+        '<div class="card info-card"><h2>Horários</h2><div>Hoje: ' + esc(u.horario) + "</div></div>" +
+        "</div></div>" +
+
+        '<section class="card det-map" aria-label="Mapa"><span>Mapa deve ficar aqui</span></section>' +
+
+        '<section class="card info-card" id="avaliacoes"><div class="rev-head">' +
+        '<div class="rev-score"><b>' + u.nota.toFixed(1) + '</b><div><div class="stars" aria-hidden="true">' + WebSaude.ui.stars(u.nota) + "</div>" +
+        "<div>" + u.avaliacoes + " avaliações</div></div></div>" +
+        '<a class="btn btn-primary" href="login.html">Deixar avaliação</a></div>' +
+        WebSaude.avaliacoes.map(function (a) {
+          return '<article class="review"><img class="avatar" src="' + esc(a.foto) + '" alt=""><div>' +
+            '<div class="review-top"><b>' + esc(a.nome) + "</b><span>" + esc(a.data) + "</span></div>" +
+            '<div class="stars" role="img" aria-label="Nota ' + a.nota + ' de 5">' + WebSaude.ui.stars(a.nota) + "</div>" +
+            "<p>" + esc(a.texto) + "</p></div></article>";
+        }).join("") + "</section>";
+
+      WebSaude.ui.bindFavs(root);
+
+      var thumbsEl = root.querySelector(".thumbs");
+      if (thumbsEl) {
+        thumbsEl.addEventListener("click", function (e) {
+          var btn = e.target.closest("button[data-src]");
+          if (!btn) return;
+          document.getElementById("foto").src = btn.dataset.src;
+          thumbsEl.querySelectorAll("button").forEach(function (b) { b.classList.toggle("is-on", b === btn); });
+        });
+      }
+
+      document.getElementById("share").addEventListener("click", function () {
+        copiar(location.href).then(function () {
+          WebSaude.ui.toast("Link copiado.");
+        }, function () {
+          WebSaude.ui.toast("Não foi possível copiar. Copie o link na barra de endereço.");
+        });
+      });
+
+      if (location.hash === "#avaliacoes") {
+        document.getElementById("avaliacoes").scrollIntoView();
+      }
+    }
+
+    function copiar(texto) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(texto);
+      return new Promise(function (ok, fail) {
+        var t = document.createElement("textarea");
+        t.value = texto;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        var done = false;
+        try { done = document.execCommand("copy"); } catch (e) {}
+        document.body.removeChild(t);
+        done ? ok() : fail();
+      });
+    }
   </script>
 </body>
 </html>

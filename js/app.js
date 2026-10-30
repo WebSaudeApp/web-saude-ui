@@ -47,7 +47,6 @@
   function header(active, mode) {
     const links = [
       ["index.html", "Início"],
-      ["resultados.html", "Encontrar unidades"],
       ["cidade.html", "Como funciona"]
     ];
     let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a><a class="btn btn-primary" href="registro.html">Registrar</a>';
@@ -58,14 +57,18 @@
       '<header class="header"><div class="header-inner">' +
       brand("index.html") +
       '<nav class="nav">' +
+      '<div class="nav-links" id="nav-links">' +
       links.map(([h, l]) => '<a href="' + h + '"' + (active === l ? ' class="is-active"' : "") + ">" + l + "</a>").join("") +
-      extra +
+      "</div>" +
+      '<div class="nav-actions">' + extra + "</div>" +
+      '<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
       "</nav></div></header>"
     );
   }
 
   function footer() {
-    return '<footer class="footer"><div class="footer-inner"><div>Institucional · Pacientes · Gestores</div><div>© Web Saúde</div></div></footer><div class="toast" role="status"></div>';
+    return '<footer class="footer"><div class="footer-inner"><div>© Web Saúde</div><div>Informações cadastradas pelos próprios estabelecimentos.</div></div></footer><div class="toast" role="status"></div>';
   }
 
   function paginate(items, page, perPage) {
@@ -171,7 +174,13 @@
   }
 
   document.addEventListener("click", function (e) {
-    const tab = e.target.closest("[data-tab]");
+    const toggle = e.target.closest(".nav-toggle");
+    if (toggle) {
+      const open = document.querySelector(".nav").classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", open);
+      return;
+    }
+    const tab =e.target.closest("[data-tab]");
     if (!tab) return;
     const group = tab.getAttribute("data-tab-group");
     document.querySelectorAll('[data-tab-group="' + group + '"]').forEach(function (b) { b.classList.toggle("is-on", b === tab); });

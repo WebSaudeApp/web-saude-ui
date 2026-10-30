@@ -11,48 +11,130 @@
 <body>
   <div class="page">
     <div data-header="Início"></div>
-    <main class="wrap">
-      <section class="hero">
-        <h1>Encontre saúde de qualidade, onde você estiver.</h1>
-        <p>Hospitais, clínicas e pronto-atendimentos confiáveis, organizados pela cidade que você escolher.</p>
-        <form class="card search-bar" action="resultados.html">
-          <label class="input-icon">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
-            <input class="input" name="q" placeholder="Hospital, clínica ou especialidade">
+    <main class="wrap home">
+      <div class="home-bar">
+        <form class="card home-filters" id="filtros" autocomplete="off">
+          <label class="field"><span>Tipo</span>
+            <select class="select" name="tipo">
+              <option value="">Todos</option>
+              <option>Hospital</option>
+              <option>Clínica</option>
+              <option>Pronto atendimento</option>
+            </select>
           </label>
-          <select class="select" name="tipo">
-            <option value="">Tipo</option>
-            <option>Hospital</option>
-            <option>Clínica</option>
-            <option>Pronto atendimento</option>
-          </select>
-          <select class="select" name="especialidade">
-            <option value="">Especialidade</option>
-            <option>Cardiologia</option>
-            <option>Ortopedia</option>
-            <option>Pediatria</option>
-            <option>Clínica Geral</option>
-          </select>
+          <label class="field"><span>Especialidade</span>
+            <select class="select" name="especialidade">
+              <option value="">Todas</option>
+              <option>Cardiologia</option>
+              <option>Clínica Geral</option>
+              <option>Dermatologia</option>
+              <option>Emergência</option>
+              <option>Neurologia</option>
+              <option>Ortopedia</option>
+              <option>Pediatria</option>
+            </select>
+          </label>
+          <label class="field"><span>Cidade</span>
+            <input class="input" name="cidade" placeholder="Nome da cidade">
+          </label>
+          <label class="field"><span>Estado</span>
+            <select class="select" name="estado">
+              <option value="">Todos</option>
+              <option>DF</option>
+              <option>MG</option>
+              <option>RJ</option>
+              <option>SP</option>
+            </select>
+          </label>
+          <button class="btn btn-ghost btn-loc" type="button" id="loc">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-10a6 6 0 0 1 12 0c0 4.4-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+            <span>Usar minha localização</span>
+          </button>
+          <button class="home-clear" type="reset">Limpar seleção</button>
+        </form>
+        <form class="card home-search" id="busca">
+          <label class="field"><span>O que você procura</span>
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+              <input class="input" name="q" placeholder="Nome ou especialidade">
+            </span>
+          </label>
           <button class="btn btn-primary" type="submit">Buscar</button>
         </form>
-      </section>
-      <section>
-        <h2 class="section-title">Unidades em destaque</h2>
-        <div id="destaques" class="list"></div>
-      </section>
+      </div>
+
+      <div class="home-body">
+        <section class="card home-list">
+          <div class="home-list-head">
+            <h1 id="contagem"></h1>
+            <p>Em ordem de nome</p>
+          </div>
+          <div class="home-list-scroll" id="lista"></div>
+        </section>
+        <aside class="card home-map" aria-label="Mapa">
+          <span>Mapa deve ficar aqui</span>
+        </aside>
+      </div>
     </main>
     <div data-footer></div>
   </div>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    WebSaude.ui.renderList({
-      target: "#destaques",
-      items: WebSaude.unidades,
-        perPage: 6,
-      noun: "unidades",
-      gridClass: "unit-grid",
-      render: function (u) { return WebSaude.ui.unitCard(u); }
+    var filtros = document.getElementById("filtros");
+    var busca = document.getElementById("busca");
+
+    function norm(s) {
+      return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    }
+
+    function filtrar() {
+      var f = filtros.elements;
+      var q = norm(busca.elements.q.value.trim());
+      var cidade = norm(f.cidade.value.trim());
+      return WebSaude.unidades.filter(function (u) {
+        if (f.tipo.value && norm(u.tipo).indexOf(norm(f.tipo.value)) !== 0) return false;
+        if (f.especialidade.value && u.especialidades.indexOf(f.especialidade.value) < 0) return false;
+        if (cidade && norm(u.cidade).indexOf(cidade) < 0) return false;
+        if (f.estado.value && u.estado !== f.estado.value) return false;
+        if (q && norm(u.nome).indexOf(q) < 0 && !u.especialidades.some(function (s) { return norm(s).indexOf(q) >= 0; })) return false;
+        return true;
+      }).sort(function (a, b) { return a.nome.localeCompare(b.nome, "pt-BR"); });
+    }
+
+    function linha(u) {
+      return '<article class="home-unit">' +
+        '<img src="' + u.foto + '" alt="' + u.nome + '">' +
+        '<div class="home-unit-body">' +
+        '<div class="home-unit-type"><span class="num">' + u.id + '</span>' + u.tipo + '</div>' +
+        '<h3>' + u.nome + '</h3>' +
+        '<div class="home-unit-addr">' + u.endereco + ' · ' + u.cidade + ' – ' + u.estado + '</div>' +
+        '<div class="spec-grid">' + u.especialidades.map(function (s) { return '<span class="chip">' + s + '</span>'; }).join("") + '</div>' +
+        '<div class="home-unit-meta"><span>Hoje: ' + u.horario + '</span><span>' + u.telefone + '</span></div>' +
+        '<div class="home-unit-actions"><a class="btn btn-primary" href="detalhes.html?id=' + u.id + '">Ver detalhes</a>' +
+        '<a class="btn btn-ghost btn-outline" href="detalhes.html?id=' + u.id + '#avaliacoes">Ver avaliações</a></div>' +
+        '</div></article>';
+    }
+
+    var lista = WebSaude.ui.renderList({
+      target: "#lista",
+      items: function () {
+        var r = filtrar();
+        document.getElementById("contagem").textContent = r.length + (r.length === 1 ? " estabelecimento encontrado" : " estabelecimentos encontrados");
+        return r;
+      },
+      perPage: 5,
+      noun: "estabelecimentos",
+      empty: "Nenhum estabelecimento encontrado.",
+      render: linha
+    });
+
+    filtros.addEventListener("change", function () { lista.refresh(); });
+    filtros.elements.cidade.addEventListener("input", function () { lista.refresh(); });
+    filtros.addEventListener("reset", function () { busca.reset(); setTimeout(function () { lista.refresh(); }, 0); });
+    busca.addEventListener("submit", function (e) { e.preventDefault(); lista.refresh(); });
+    document.getElementById("loc").addEventListener("click", function () {
+      WebSaude.ui.toast("Localização disponível em breve.");
     });
   </script>
 </body>
