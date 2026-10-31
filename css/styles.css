@@ -1064,6 +1064,22 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
   }
   .nav-links a:hover, .nav-links a.is-active { color: var(--teal); }
   .nav.is-open .nav-links { display: flex; }
+  .nav-mobile-action {
+    display: block;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .nav-mobile-action .btn {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+    background: var(--teal);
+    color: #fff !important;
+    border: none;
+    font-weight: 700;
+    border-radius: 10px;
+  }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
 

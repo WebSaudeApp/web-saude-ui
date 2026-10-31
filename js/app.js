@@ -61,7 +61,7 @@
       '<nav class="nav">' +
       '<div class="nav-links" id="nav-links">' +
       links.map(([h, l]) => '<a href="' + h + '"' + (active === l ? ' class="is-active"' : "") + ">" + l + "</a>").join("") +
-      '<a href="' + accountHref + '"' + (active === accountLabel ? ' class="is-active"' : "") + ">" + accountLabel + "</a>" +
+      '<div class="nav-mobile-action">' + extra + "</div>" +
       "</div>" +
       '<div class="nav-actions">' + extra + "</div>" +
       '<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">' +
