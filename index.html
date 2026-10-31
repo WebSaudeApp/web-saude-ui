@@ -6,13 +6,21 @@
   <title>Web Saúde — Encontre unidades de saúde</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/favicon.png">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div class="page">
     <div data-header="Início"></div>
     <main class="wrap home">
-      <div class="home-bar">
+      <div class="home-map-wrap">
+        <aside class="card home-map" aria-label="Mapa">
+          <span>Mapa deve ficar aqui</span>
+        </aside>
+      </div>
+
+      <div class="home-scroll-area">
+        <div class="home-bar">
         <form class="card home-filters" id="filtros" autocomplete="off">
           <label class="field"><span>Tipo</span>
             <select class="select" name="tipo">
@@ -61,9 +69,6 @@
           </div>
           <div class="home-list-scroll" id="lista"></div>
         </section>
-        <aside class="card home-map" aria-label="Mapa">
-          <span>Mapa deve ficar aqui</span>
-        </aside>
       </div>
 
       <section class="how-home" aria-labelledby="how-title">
@@ -92,8 +97,9 @@
           </li>
         </ol>
       </section>
+        <div data-footer></div>
+      </div>
     </main>
-    <div data-footer></div>
   </div>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
@@ -142,7 +148,7 @@
 
     var lista = WebSaude.ui.renderInfinite({
       target: "#lista",
-      root: "self",
+      root: window.matchMedia("(max-width: 980px)").matches ? ".home-scroll-area" : "self",
       perPage: 5,
       empty: '<p class="center-note">Nenhum estabelecimento encontrado.</p>',
       items: filtrar,
