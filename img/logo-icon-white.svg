@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <!-- Cabo da Lupa Branco -->
+  <line x1="150" y1="150" x2="200" y2="200" stroke="#ffffff" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Aro da Lupa Branco -->
+  <circle cx="106" cy="106" r="82" fill="none" stroke="#ffffff" stroke-width="16"/>
+
+  <!-- Cruz Médica (+) Toda Branca com Contorno e Preenchimento -->
+  <path d="M 88 56 L 124 56 L 124 88 L 156 88 L 156 124 L 124 124 L 124 156 L 88 156 L 88 124 L 56 124 L 56 88 L 88 88 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+</svg>

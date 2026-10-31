@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 100" width="100%" height="100%">
+  <rect width="100%" height="100%" rx="16" fill="#00705f"/>
+  <!-- Ícone branco e turquesa -->
+  <g transform="translate(18, 8) scale(0.70)">
+    <line x1="68" y1="68" x2="102" y2="102" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="46" cy="46" r="34" fill="#ffffff"/>
+    <circle cx="46" cy="46" r="25" fill="#14b8a6"/>
+    <path d="M 31 31 A 20 20 0 0 1 40 26" fill="none" stroke="#9ee2d9" stroke-width="2.8" stroke-linecap="round"/>
+    <rect x="26" y="42" width="40" height="8" rx="4" fill="#ffffff"/>
+    <rect x="42" y="26" width="8" height="40" rx="4" fill="#ffffff"/>
+  </g>
+  <!-- Texto Branco estilo Doctoralia -->
+  <text x="110" y="62" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="42" font-weight="800" fill="#ffffff" letter-spacing="-1.5">WebSaúde</text>
+</svg>
