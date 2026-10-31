@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Saúde — Cadastrar unidade</title>
+  <title>Web Saúde — Cadastrar estabelecimento</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
@@ -11,134 +11,396 @@
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="page">
-    <div data-header="Minhas unidades" data-mode="gestor"></div>
+    <div data-header="Meus estabelecimentos" data-mode="gestor"></div>
     <main id="conteudo" class="wrap gestor">
-      <div class="unit-form-head">
-        <a class="det-back" href="minhas-unidades.html">← Minhas unidades</a>
-        <p class="admin-kicker">Gestor de unidades</p>
-        <h1 id="page-title">Cadastrar nova unidade</h1>
-        <p class="gestor-lead">Use <strong>Próximo</strong> até o último passo. Só então envie para aprovação.</p>
+      <div class="establishment-hero card">
+        <div class="establishment-hero-top">
+          <a class="det-back" href="minhas-unidades.html" style="margin:0;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle;margin-right:4px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Voltar para Meus estabelecimentos</span>
+          </a>
+          <span class="establishment-badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Área do Gestor · Cadastro Oficial
+          </span>
+        </div>
+        <div class="establishment-hero-main">
+          <div>
+            <h1 id="page-title" style="margin: 4px 0 6px;">Cadastrar estabelecimento</h1>
+            <p class="gestor-lead" id="page-subtitle" style="margin: 0;">Cadastre seu hospital ou clínica para conectar-se a milhares de pacientes e receber contatos diretos na plataforma.</p>
+          </div>
+          <div class="establishment-progress-box">
+            <div class="establishment-progress-label">
+              <span id="step-count-text">Etapa 1 de 6</span>
+              <strong id="step-pct-text">17% concluído</strong>
+            </div>
+            <div class="establishment-progress-track">
+              <div class="establishment-progress-bar" id="progress-bar" style="width: 17%;"></div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div class="callout" id="banner" hidden></div>
-      <ol class="stepper" id="stepper" aria-label="Passos do cadastro"></ol>
+      <ol class="stepper stepper-modern" id="stepper" aria-label="Passos do cadastro"></ol>
+
       <form id="form" class="unit-form">
+        <!-- ETAPA 1: IDENTIFICAÇÃO -->
         <section class="card panel unit-block" id="sec-info" data-step="0">
           <header class="unit-block-head">
             <span class="how-num">1</span>
             <div>
-              <h2>Informações</h2>
-              <p>Nome, tipo e telefone da unidade.</p>
+              <h2>Identificação do estabelecimento</h2>
+              <p>Nome, categoria médica e canais oficiais de contato com os pacientes.</p>
             </div>
           </header>
-          <label class="field"><span>Nome da unidade</span><input class="input" name="nome" required maxlength="80" placeholder="Ex.: Clínica Jardim Saúde"></label>
-          <p class="field-error" id="nome-error" hidden>Informe o nome da unidade.</p>
-          <fieldset class="tipo-pills">
-            <legend>Tipo</legend>
-            <label><input type="radio" name="tipo" value="Clínica"><span>Clínica</span></label>
-            <label><input type="radio" name="tipo" value="Hospital" checked><span>Hospital</span></label>
-          </fieldset>
-          <div class="form-grid-2">
-            <label class="field"><span>E-mail</span><input class="input" type="email" name="email" placeholder="contato@unidade.com.br"></label>
-            <label class="field"><span>Telefone</span><input class="input" name="telefone" inputmode="tel" placeholder="(11) 3456-7890"></label>
+
+          <label class="field">
+            <span>Nome do estabelecimento *</span>
+            <input class="input" name="nome" required maxlength="80" placeholder="Ex.: Clínica Vida & Saúde, Hospital Santa Clara">
+          </label>
+          <p class="field-error" id="nome-error" hidden>Informe o nome do estabelecimento.</p>
+
+          <div class="field">
+            <span>Tipo de estabelecimento *</span>
+            <div class="tipo-cards">
+              <label class="tipo-card">
+                <input type="radio" name="tipo" value="Hospital" checked>
+                <div class="tipo-card-inner">
+                  <div class="tipo-card-icon hospital-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 9h6M9 13h6M12 6v10"/></svg>
+                  </div>
+                  <div class="tipo-card-text">
+                    <strong>Hospital</strong>
+                    <p>Atendimento 24h, internação, pronto-socorro e procedimentos cirúrgicos.</p>
+                  </div>
+                  <span class="tipo-card-check">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  </span>
+                </div>
+              </label>
+
+              <label class="tipo-card">
+                <input type="radio" name="tipo" value="Clínica">
+                <div class="tipo-card-inner">
+                  <div class="tipo-card-icon clinica-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  </div>
+                  <div class="tipo-card-text">
+                    <strong>Clínica Médica</strong>
+                    <p>Consultas ambulatoriais, exames diagnósticos e tratamentos programados.</p>
+                  </div>
+                  <span class="tipo-card-check">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
-          <label class="field"><span>Descrição</span><textarea class="textarea" name="descricao" placeholder="O que o paciente encontra aqui"></textarea></label>
+
+          <div class="form-grid-2">
+            <label class="field">
+              <span>E-mail de contato</span>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input class="input" type="email" name="email" placeholder="contato@estabelecimento.com.br">
+              </span>
+            </label>
+            <label class="field">
+              <span>Telefone / WhatsApp</span>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <input class="input" name="telefone" inputmode="tel" placeholder="(11) 98765-4321">
+              </span>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Apresentação do estabelecimento</span>
+            <textarea class="textarea" name="descricao" rows="3" placeholder="Apresente sua infraestrutura, equipe médica, certificações e diferenciais de atendimento aos pacientes..."></textarea>
+            <small class="field-tip">Uma descrição detalhada gera muito mais confiança nos pacientes que buscam sua clínica.</small>
+          </label>
         </section>
 
+        <!-- ETAPA 2: ENDEREÇO -->
         <section class="card panel unit-block" id="sec-end" data-step="1" hidden>
           <header class="unit-block-head">
             <span class="how-num">2</span>
             <div>
-              <h2>Endereço</h2>
-              <p>Onde a unidade aparece na busca e no mapa.</p>
+              <h2>Endereço e localização textual</h2>
+              <p>Endereço oficial para correspondência, identificação e busca por cidade e bairro.</p>
             </div>
           </header>
-          <label class="field"><span>Rua</span><input class="input" name="rua" placeholder="Nome da rua"></label>
+
+          <div class="info-tip-box">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <p>Preencha os dados do logradouro. Na próxima etapa você poderá validar e posicionar o pino exato no mapa via GPS.</p>
+          </div>
+
           <div class="form-grid-3">
-            <label class="field"><span>Número</span><input class="input" name="numero"></label>
-            <label class="field"><span>Complemento</span><input class="input" name="complemento"></label>
             <label class="field"><span>CEP</span><input class="input" name="cep" inputmode="numeric" placeholder="00000-000"></label>
+            <label class="field" style="grid-column: span 2;"><span>Rua / Avenida</span><input class="input" name="rua" placeholder="Ex.: Av. Paulista"></label>
+          </div>
+          <div class="form-grid-3">
+            <label class="field"><span>Número</span><input class="input" name="numero" placeholder="Ex.: 1500"></label>
+            <label class="field"><span>Complemento / Sala</span><input class="input" name="complemento" placeholder="Ex.: Sala 402, Bloco B"></label>
+            <label class="field"><span>Bairro</span><input class="input" name="bairro" placeholder="Ex.: Bela Vista"></label>
           </div>
           <div class="form-grid-2">
-            <label class="field"><span>Cidade</span><input class="input" name="cidade"></label>
-            <label class="field"><span>Estado</span>
+            <label class="field"><span>Cidade</span><input class="input" name="cidade" placeholder="Ex.: São Paulo"></label>
+            <label class="field"><span>Estado (UF)</span>
               <select class="select" name="estado">
-                <option value="">Selecione</option>
+                <option value="">Selecione o estado</option>
               </select>
             </label>
           </div>
         </section>
 
-        <section class="card panel unit-block" id="sec-esp" data-step="2" hidden>
+        <!-- ETAPA 3: LOCALIZAÇÃO NO MAPA & COORDENADAS (NOVA ABA) -->
+        <section class="card panel unit-block" id="sec-map" data-step="2" hidden>
           <header class="unit-block-head">
             <span class="how-num">3</span>
             <div>
-              <h2>Especialidades</h2>
-              <p>Marque as que a unidade atende.</p>
+              <h2>Localização no Mapa e Coordenadas GPS</h2>
+              <p>Posicione o ponto exato da entrada da clínica para alimentar a busca por proximidade geográfica.</p>
             </div>
           </header>
-          <div id="lista-esp" class="esp-pills"></div>
-          <div class="esp-add">
-            <label class="field"><span>Outra especialidade</span><input class="input" id="esp-custom" placeholder="Ex.: Fisioterapia"></label>
-            <button class="btn btn-ghost" type="button" id="add-esp">Adicionar</button>
+
+          <div class="info-tip-box">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            <p>O sistema de busca do Web Saúde calcula a distância em km até o paciente através da <strong>Latitude</strong> e <strong>Longitude</strong>. Use o GPS, busque no mapa ou clique no local exato.</p>
           </div>
-        </section>
 
-        <section class="card panel unit-block" id="sec-hor" data-step="3" hidden>
-          <header class="unit-block-head">
-            <span class="how-num">4</span>
-            <div>
-              <h2>Horários</h2>
-              <p>Ative o dia e defina abertura e fechamento.</p>
+          <!-- Barra de Ações Rápidas do Mapa -->
+          <div class="map-toolbar">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-sm" type="button" id="btn-gps">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+                <span>Usar minha localização atual</span>
+              </button>
+              <button class="btn btn-ghost btn-sm" type="button" id="btn-geocode">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Localizar pelo endereço digitado</span>
+              </button>
             </div>
-          </header>
-          <div class="hours-table" id="lista-hor"></div>
-        </section>
 
-        <section class="card panel unit-block" id="sec-fotos" data-step="4" hidden>
-          <header class="unit-block-head">
-            <span class="how-num">5</span>
-            <div>
-              <h2>Fotos</h2>
-              <p>A foto de perfil é a capa da unidade. Em seguida adicione várias fotos da galeria.</p>
+            <div class="map-search-bar">
+              <input class="input input-sm" id="map-query" placeholder="Buscar rua, bairro ou ponto de referência no mapa..." style="min-height:36px;font-size:0.85rem;">
+              <button class="btn btn-ghost btn-sm" type="button" id="btn-search-map">Buscar</button>
             </div>
-          </header>
+          </div>
 
-          <div class="photo-perfil">
-            <h3>Foto de perfil</h3>
-            <p class="help">Essa imagem aparece na busca e no topo da página da unidade.</p>
-            <div class="photo-perfil-row">
-              <div class="photo-perfil-preview" id="perfil-preview">
-                <span>Sem foto de perfil</span>
+          <!-- Container Visual do Mapa (Placeholder igual outras páginas na UI) -->
+          <div class="card det-map" id="map-placeholder" aria-label="Mapa" style="min-height: 280px; margin: 6px 0 10px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span>Aqui que vai ficar o mapa</span>
+              <small id="map-preview-coords" style="font-weight: 600; font-size: 0.82rem; color: var(--teal);"></small>
+            </div>
+          </div>
+
+          <!-- Inputs de Latitude e Longitude (Preenchidos automaticamente ou manualmente) -->
+          <div class="map-coords-card">
+            <div class="map-coords-head">
+              <div>
+                <strong style="color:var(--text);font-size:0.95rem;">Coordenadas Geográficas (Latitude e Longitude)</strong>
+                <p class="help" style="margin:2px 0 0;">Capturadas automaticamente ao mover o mapa, ou digite manualmente se já souber.</p>
               </div>
-              <label class="btn btn-primary photo-btn">
-                <input id="perfil-input" type="file" accept="image/*">
-                <span id="perfil-btn-label">Escolher foto de perfil</span>
+              <span class="coords-status-badge" id="coords-badge">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <span id="coords-badge-txt">Ponto definido</span>
+              </span>
+            </div>
+
+            <div class="map-coords-grid">
+              <label class="field" style="margin:0;">
+                <span>Latitude (ex.: -23.550520)</span>
+                <input class="input" name="latitude" id="coord-lat" placeholder="-23.550520" step="any" type="number">
+              </label>
+              <label class="field" style="margin:0;">
+                <span>Longitude (ex.: -46.633308)</span>
+                <input class="input" name="longitude" id="coord-lng" placeholder="-46.633308" step="any" type="number">
               </label>
             </div>
           </div>
+        </section>
 
-          <div class="photo-galeria">
-            <h3>Galeria da unidade</h3>
-            <p class="help">Ambiente, recepção, consultórios. Dá para enviar várias de uma vez.</p>
-            <label class="btn btn-ghost photo-btn">
-              <input id="galeria-input" type="file" accept="image/*" multiple>
-              <span>Adicionar fotos</span>
+        <!-- ETAPA 4: ESPECIALIDADES -->
+        <section class="card panel unit-block" id="sec-esp" data-step="3" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">4</span>
+            <div>
+              <h2>Especialidades médicas atendidas</h2>
+              <p>Marque as especialidades disponíveis no estabelecimento para ser encontrado pelos filtros dos pacientes.</p>
+            </div>
+          </header>
+
+          <div class="esp-header-tools">
+            <label class="field filter-search" style="margin: 0; flex: 1; min-width: 240px;">
+              <span>Buscar na lista</span>
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <input class="input" id="esp-busca" type="search" placeholder="Ex.: Cardiologia, Pediatria, Dermatologia..." autocomplete="off">
+              </span>
             </label>
-            <div class="photo-grid" id="fotos-grid"></div>
-            <p class="help" id="galeria-vazia">Nenhuma foto na galeria ainda.</p>
+            <span class="badge badge-teal" id="esp-count-badge">0 selecionadas</span>
+          </div>
+
+          <div id="lista-esp" class="esp-pills" style="max-height: 280px; overflow-y: auto; padding: 4px;"></div>
+
+          <div class="esp-add" style="background:#f8fafc; padding:14px; border-radius:12px; border:1px solid var(--line);">
+            <label class="field" style="margin:0;">
+              <span>Outra especialidade ou serviço</span>
+              <input class="input" id="esp-custom" placeholder="Ex.: Fisioterapia Esportiva, Acupuntura...">
+            </label>
+            <button class="btn btn-primary" type="button" id="add-esp">Adicionar especialidade</button>
           </div>
         </section>
 
-        <div class="form-actions unit-form-actions" id="acoes"></div>
+        <!-- ETAPA 5: HORÁRIOS -->
+        <section class="card panel unit-block" id="sec-hor" data-step="4" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">5</span>
+            <div>
+              <h2>Horários de funcionamento</h2>
+              <p>Adicione o mesmo horário para vários dias de uma vez ou personalize dias diferentes. Os dias que não forem escolhidos ficarão automaticamente como <strong>Fechado</strong>.</p>
+            </div>
+          </header>
+
+          <div class="hours-panel">
+            <!-- Opção de Estabelecimento Aberto 24 Horas -->
+            <div class="hours-24-card">
+              <label class="check-24h">
+                <input type="checkbox" id="hor-global-24">
+                <div class="check-24h-text">
+                  <strong>Aberto 24 horas (Plantão Contínuo todos os dias)</strong>
+                  <p>Marque esta opção se o estabelecimento atende 24 horas por dia, 7 dias por semana (ex.: Pronto-Socorro ou Hospital).</p>
+                </div>
+              </label>
+              <span class="chip chip-ok" id="badge-24h-global" hidden>Plantão 24h Ativo</span>
+            </div>
+
+            <!-- Construtor de Horários para Múltiplos Dias -->
+            <div class="hours-builder" id="hours-custom-builder">
+              <div class="hours-dias-selector">
+                <div class="hours-dias-selector-head">
+                  <span style="font-weight:600; font-size:0.88rem; color:var(--text);">1. Selecione em quais dias você deseja aplicar o horário:</span>
+                  <div class="hours-quick-links">
+                    <button class="hours-quick-btn" type="button" id="btn-dias-uteis">Seg a Sex</button>
+                    <span>·</span>
+                    <button class="hours-quick-btn" type="button" id="btn-dias-fim">Fim de semana</button>
+                    <span>·</span>
+                    <button class="hours-quick-btn" type="button" id="btn-dias-todos">Todos os dias</button>
+                    <span>·</span>
+                    <button class="hours-quick-btn" type="button" id="btn-dias-limpar" style="color:var(--muted);">Desmarcar</button>
+                  </div>
+                </div>
+
+                <div class="hours-dias-chips">
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="1" checked><span>Seg</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="2" checked><span>Ter</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="3" checked><span>Qua</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="4" checked><span>Qui</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="5" checked><span>Sex</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="6"><span>Sáb</span></label>
+                  <label class="hours-dia-chip"><input type="checkbox" name="builder_dia" value="0"><span>Dom</span></label>
+                </div>
+              </div>
+
+              <!-- Definição do Horário para estes dias -->
+              <div class="hours-time-inputs">
+                <label class="hours-24-option">
+                  <input type="checkbox" id="builder-24h">
+                  <span>Aberto 24 horas nestes dias</span>
+                </label>
+
+                <div id="builder-time-fields" style="display:flex; align-items:flex-end; gap:10px;">
+                  <label class="field" style="margin:0;">
+                    <span>Abre às</span>
+                    <input class="input" id="builder-abre" type="time" value="08:00">
+                  </label>
+                  <span class="hours-sep" style="align-self:center; margin-bottom:8px;">às</span>
+                  <label class="field" style="margin:0;">
+                    <span>Fecha às</span>
+                    <input class="input" id="builder-fecha" type="time" value="18:00">
+                  </label>
+                </div>
+
+                <button class="btn btn-primary" type="button" id="btn-aplicar-horario" style="min-height:42px;">
+                  + Aplicar horário aos dias selecionados
+                </button>
+              </div>
+            </div>
+
+            <!-- Grade Resumo dos 7 Dias da Semana -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-size:0.92rem; color:var(--text);">Grade semanal de funcionamento:</strong>
+                <small class="help">Dias sem horário configurado ficam automaticamente como <strong>Fechado</strong>.</small>
+              </div>
+
+              <div class="hours-weekly-list" id="grade-semanal"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ETAPA 6: FOTOS -->
+        <section class="card panel unit-block" id="sec-fotos" data-step="5" hidden>
+          <header class="unit-block-head">
+            <span class="how-num">6</span>
+            <div>
+              <h2>Fotos e identidade visual</h2>
+              <p>Fotos atraentes aumentam expressivamente a credibilidade e a preferência dos pacientes.</p>
+            </div>
+          </header>
+
+          <div class="photo-section-card">
+            <div class="photo-section-head">
+              <div>
+                <h3 style="margin:0 0 4px;">Foto principal (Capa / Fachada) *</h3>
+                <p class="help" style="margin:0;">Imagem exibida no topo do perfil e em destaque nos resultados de busca.</p>
+              </div>
+              <label class="btn btn-primary photo-btn">
+                <input id="perfil-input" type="file" accept="image/*">
+                <span id="perfil-btn-label">Escolher foto de capa</span>
+              </label>
+            </div>
+            <div class="photo-perfil-preview-lg" id="perfil-preview">
+              <div class="photo-empty-state">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Nenhuma foto de capa selecionada</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="photo-section-card">
+            <div class="photo-section-head">
+              <div>
+                <h3 style="margin:0 0 4px;">Galeria de fotos do estabelecimento</h3>
+                <p class="help" style="margin:0;">Recepção, consultórios, equipamentos médicos e área de espera.</p>
+              </div>
+              <label class="btn btn-ghost photo-btn">
+                <input id="galeria-input" type="file" accept="image/*" multiple>
+                <span>+ Adicionar fotos</span>
+              </label>
+            </div>
+            <div class="photo-grid" id="fotos-grid"></div>
+            <p class="help" id="galeria-vazia" style="margin-top:6px;">Nenhuma foto na galeria ainda.</p>
+          </div>
+        </section>
+
+        <!-- BARRA FIXA DE AÇÕES -->
+        <div class="form-actions unit-form-actions establishment-actions" id="acoes"></div>
       </form>
     </main>
     <div data-footer></div>
   </div>
+
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
   <script>
-    var STEPS = ["sec-info", "sec-end", "sec-esp", "sec-hor", "sec-fotos"];
-    var STEP_LABELS = ["Informações", "Endereço", "Especialidades", "Horários", "Fotos"];
+    var STEPS = ["sec-info", "sec-end", "sec-map", "sec-esp", "sec-hor", "sec-fotos"];
+    var STEP_LABELS = ["Identificação", "Endereço", "Mapa & GPS", "Especialidades", "Horários", "Fotos & Fachada"];
     var passo = 0;
     var params = WebSaude.ui.params();
     var editId = Number(params.get("id") || 0);
@@ -147,15 +409,22 @@
       : null;
     var perfil = null;
     var galeria = [];
-    var horarios = WebSaude.horariosPadrao();
+    var horarios = WebSaude.horariosPadrao().map(function (h) {
+      return Object.assign({}, h, { active: false });
+    });
+    var horCopiar = false;
+    var horRespondeu = false;
     var especialidades = [];
     var customEsp = [];
     var locked = false;
 
+    var DEFAULT_COORDS = [-23.55052, -46.633308]; // São Paulo Centro
+
     if (editId && !unidade) {
-      bloquear("Unidade não encontrada", "Essa unidade não existe ou foi removida.");
+      bloquear("Estabelecimento não encontrado", "Este estabelecimento não existe ou foi removido.");
     } else if (unidade && unidade.gestor !== WebSaude.GESTOR_ATUAL) {
-      bloquear("Acesso negado", "Você só administra as unidades desta conta. Esta unidade pertence a outro gestor.");
+      bloquear("Acesso negado", "Você só administra os estabelecimentos desta conta. Este estabelecimento pertence a outro gestor.");
+
     } else {
       iniciar();
     }
@@ -177,14 +446,14 @@
       });
       if (unidade) {
         document.getElementById("page-title").textContent = "Editar " + unidade.nome;
-        document.title = "Web Saúde — Editar unidade";
+        document.title = "Web Saúde — Editar estabelecimento";
         fill();
       }
       renderEsp();
       renderHor();
       renderFotos();
       renderBanner();
-      irPara(0);
+      irPara(Number(params.get("passo") || 0) || 0);
       setLocked(locked);
     }
 
@@ -197,19 +466,38 @@
       form.rua.value = unidade.rua || "";
       form.numero.value = unidade.numero || "";
       form.complemento.value = unidade.complemento || "";
+      if (form.bairro && unidade.bairro) form.bairro.value = unidade.bairro;
       form.cep.value = unidade.cep || "";
       form.cidade.value = unidade.cidade || "";
       form.estado.value = unidade.estado || "";
+
+      // Coordenadas
+      if (unidade.latitude != null && unidade.longitude != null) {
+        form.latitude.value = Number(unidade.latitude).toFixed(6);
+        form.longitude.value = Number(unidade.longitude).toFixed(6);
+      }
+
       var tipo = /cl[ií]nica/i.test(unidade.tipo || "") ? "Clínica" : "Hospital";
       var radio = form.querySelector('input[name="tipo"][value="' + tipo + '"]');
       if (radio) radio.checked = true;
-      especialidades = (unidade.especialidades || []).slice();
+      especialidades = (unidade.especialidades || []).map(WebSaude.canonEsp);
       customEsp = especialidades.filter(function (s) { return WebSaude.ESPECIALIDADES.indexOf(s) < 0; });
       horarios = (unidade.horarios && unidade.horarios.length) ? unidade.horarios.map(function (h) { return Object.assign({}, h); }) : WebSaude.horariosPadrao();
+      var all24 = horarios.length > 0 && horarios.every(function (h) { return h.active && h.atende24h; });
+      document.getElementById("hor-global-24").checked = all24;
       var urls = unidade.fotos && unidade.fotos.length ? unidade.fotos : (unidade.foto ? [unidade.foto] : []);
       if (urls[0]) perfil = { id: "perfil", url: urls[0] };
       galeria = urls.slice(1).map(function (url, i) { return { id: "gal-" + i, url: url }; });
-      locked = WebSaude.situacaoUnidade(unidade) === "Pendente";
+      locked = false;
+    }
+
+    function setCoords(lat, lng) {
+      document.getElementById("coord-lat").value = Number(lat).toFixed(6);
+      document.getElementById("coord-lng").value = Number(lng).toFixed(6);
+      var badge = document.getElementById("coords-badge-txt");
+      if (badge) badge.textContent = "Coordenadas capturadas";
+      var preview = document.getElementById("map-preview-coords");
+      if (preview) preview.textContent = "Coordenadas: " + Number(lat).toFixed(4) + ", " + Number(lng).toFixed(4);
     }
 
     function irPara(n) {
@@ -221,6 +509,16 @@
         var cls = i === passo ? " is-on" : (i < passo ? " is-done" : "");
         return '<li class="stepper-item' + cls + '"><span>' + (i + 1) + "</span> " + label + "</li>";
       }).join("");
+
+      var pct = Math.round(((passo + 1) / STEPS.length) * 100);
+      var bar = document.getElementById("progress-bar");
+      if (bar) bar.style.width = pct + "%";
+      var stepCount = document.getElementById("step-count-text");
+      if (stepCount) stepCount.textContent = "Etapa " + (passo + 1) + " de " + STEPS.length + " · " + STEP_LABELS[passo];
+      var stepPct = document.getElementById("step-pct-text");
+      if (stepPct) stepPct.textContent = pct + "% concluído";
+
+
       renderAcoes();
       document.getElementById("conteudo").scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -232,19 +530,19 @@
       if (s === "Pendente") {
         ban.hidden = false;
         ban.className = "callout callout-warn";
-        ban.innerHTML = "<strong>Em análise.</strong> Retire o envio se precisar editar.";
+        ban.innerHTML = "<strong>Em análise.</strong> Você pode ajustar dados e fotos. Salve as alterações ou retire o envio.";
       } else if (s === "Rejeitado") {
         ban.hidden = false;
         ban.className = "callout callout-danger";
-        ban.innerHTML = "<strong>Rejeitada.</strong> Motivo: " + esc(unidade.motivoRejeicao || "Revise o cadastro e reenvie.");
+        ban.innerHTML = "<strong>Rejeitado.</strong> Motivo: " + esc(unidade.motivoRejeicao || "Revise o cadastro e reenvie.");
       } else if (s === "Aprovado" && unidade.status !== "Publicado") {
         ban.hidden = false;
         ban.className = "callout callout-ok";
-        ban.innerHTML = "<strong>Aprovada.</strong> No último passo você pode publicar.";
+        ban.innerHTML = "<strong>Aprovado.</strong> No último passo você pode publicar.";
       } else if (s === "Aprovado") {
         ban.hidden = false;
         ban.className = "callout callout-ok";
-        ban.innerHTML = "<strong>Publicada.</strong> Um novo envio volta para análise.";
+        ban.innerHTML = "<strong>Publicado.</strong> Altere informações, horários e fotos e salve no último passo.";
       } else {
         ban.hidden = true;
       }
@@ -256,29 +554,89 @@
         var on = especialidades.indexOf(s) >= 0 ? " checked" : "";
         return '<label><input type="checkbox" data-esp="' + esc(s) + '"' + on + "><span>" + esc(s) + "</span></label>";
       }).join("");
+
+      var badge = document.getElementById("esp-count-badge");
+      if (badge) {
+        badge.textContent = especialidades.length + (especialidades.length === 1 ? " selecionada" : " selecionadas");
+      }
+      filterEsp();
+    }
+
+    function filterEsp() {
+      var q = WebSaude.normEsp(document.getElementById("esp-busca").value);
+      document.querySelectorAll("#lista-esp label").forEach(function (lab) {
+        var nome = lab.querySelector("[data-esp]").getAttribute("data-esp");
+        lab.hidden = !!(q && WebSaude.normEsp(nome).indexOf(q) < 0);
+      });
     }
 
     function renderHor() {
-      document.getElementById("lista-hor").innerHTML = horarios.map(function (h) {
-        return '<div class="hours-row' + (h.active ? " is-on" : "") + '">' +
-          '<label class="hours-day"><input type="checkbox" data-hor="' + h.weekday + '" data-campo="active"' + (h.active ? " checked" : "") + ">" +
-          "<span>" + WebSaude.DIAS[h.weekday] + "</span></label>" +
-          '<input class="input" type="time" data-hor="' + h.weekday + '" data-campo="opensAt" value="' + h.opensAt + '" aria-label="Abre">' +
-          '<span class="hours-sep">às</span>' +
-          '<input class="input" type="time" data-hor="' + h.weekday + '" data-campo="closesAt" value="' + h.closesAt + '" aria-label="Fecha">' +
-          "</div>";
+      var global24 = document.getElementById("hor-global-24").checked;
+      var builder = document.getElementById("hours-custom-builder");
+      var badge = document.getElementById("badge-24h-global");
+      if (builder) builder.hidden = global24;
+      if (badge) badge.hidden = !global24;
+
+      if (global24) {
+        horarios.forEach(function (h) {
+          h.active = true;
+          h.atende24h = true;
+          h.opensAt = "00:00";
+          h.closesAt = "23:59";
+        });
+      }
+
+      var grade = document.getElementById("grade-semanal");
+      if (!grade) return;
+
+      // Ordem semanal: Segunda a Sábado, depois Domingo
+      var ordemDias = [1, 2, 3, 4, 5, 6, 0];
+      grade.innerHTML = ordemDias.map(function (diaIdx) {
+        var h = horarios.filter(function (item) { return item.weekday === diaIdx; })[0];
+        if (!h) {
+          h = { weekday: diaIdx, opensAt: "08:00", closesAt: "18:00", active: false, atende24h: false };
+          horarios.push(h);
+        }
+        var nomeDia = WebSaude.DIAS[diaIdx];
+        var rowClass = h.active ? "hours-day-row is-open" : "hours-day-row is-closed";
+
+        var statusHtml = "";
+        if (!h.active) {
+          statusHtml = '<span class="chip chip-muted">Fechado</span>';
+        } else if (h.atende24h) {
+          statusHtml = '<span class="chip chip-ok">Aberto 24 horas</span>';
+        } else {
+          statusHtml = '<span class="chip chip-teal">' + esc(h.opensAt) + " às " + esc(h.closesAt) + "</span>";
+        }
+
+        var actionHtml = "";
+        if (!global24) {
+          if (h.active) {
+            actionHtml = '<button type="button" class="btn btn-ghost btn-sm" data-hor-fechar="' + diaIdx + '">Marcar Fechado</button>';
+          } else {
+            actionHtml = '<button type="button" class="btn btn-ghost btn-sm" data-hor-configurar="' + diaIdx + '">Configurar</button>';
+          }
+        }
+
+        return '<div class="' + rowClass + '">' +
+          '<span class="hours-day-name">' + esc(nomeDia) + '</span>' +
+          '<div class="hours-day-status">' + statusHtml + '</div>' +
+          '<div class="hours-day-actions">' + actionHtml + '</div>' +
+          '</div>';
       }).join("");
     }
 
     function renderFotos() {
       var box = document.getElementById("perfil-preview");
       if (perfil) {
-        box.innerHTML = '<img src="' + esc(perfil.url) + '" alt="Foto de perfil">' +
-          '<button type="button" class="photo-thumb-x" id="del-perfil" aria-label="Remover foto de perfil">×</button>';
-        document.getElementById("perfil-btn-label").textContent = "Trocar foto de perfil";
+        box.innerHTML = '<img src="' + esc(perfil.url) + '" alt="Foto de capa">' +
+          '<button type="button" class="photo-thumb-x" id="del-perfil" aria-label="Remover foto de capa">×</button>';
+        document.getElementById("perfil-btn-label").textContent = "Alterar foto de capa";
       } else {
-        box.innerHTML = "<span>Sem foto de perfil</span>";
-        document.getElementById("perfil-btn-label").textContent = "Escolher foto de perfil";
+        box.innerHTML = '<div class="photo-empty-state">' +
+          '<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
+          '<span>Nenhuma foto de capa selecionada</span></div>';
+        document.getElementById("perfil-btn-label").textContent = "Escolher foto de capa";
       }
       document.getElementById("fotos-grid").innerHTML = galeria.map(function (f) {
         return '<div class="photo-thumb">' +
@@ -293,26 +651,32 @@
       var s = unidade ? WebSaude.situacaoUnidade(unidade) : "Rascunho";
       var ultimo = passo === STEPS.length - 1;
       var html = "";
-      if (passo > 0) html += '<button class="btn btn-ghost" type="button" id="voltar">Voltar</button>';
+      if (passo > 0) html += '<button class="btn btn-ghost" type="button" id="voltar">← Voltar</button>';
       else html += '<a class="btn btn-ghost" href="minhas-unidades.html">Cancelar</a>';
+
+      var centerGroup = '<div style="display:flex;gap:10px;">';
       if (s === "Pendente") {
-        html += '<button class="btn btn-ghost" type="button" id="retirar">Retirar envio</button>';
-        if (!ultimo) html += '<button class="btn btn-primary" type="button" id="proximo">Próximo</button>';
+        centerGroup += '<button class="btn btn-ghost" type="button" id="retirar">Retirar envio</button>';
+        centerGroup += '<button class="btn btn-ghost" type="button" id="salvar-pub">Salvar alterações</button>';
+        if (!ultimo) centerGroup += '<button class="btn btn-primary" type="button" id="proximo">Próxima etapa →</button>';
       } else {
-        html += '<button class="btn btn-ghost" type="button" id="rascunho">Salvar rascunho</button>';
+        centerGroup += '<button class="btn btn-ghost" type="button" id="rascunho">Salvar rascunho</button>';
         if (!ultimo) {
-          html += '<button class="btn btn-primary" type="button" id="proximo">Próximo</button>';
+          centerGroup += '<button class="btn btn-primary" type="button" id="proximo">Próxima etapa →</button>';
+        } else if (s === "Aprovado" && unidade && unidade.status === "Publicado") {
+          centerGroup += '<button class="btn btn-primary" type="button" id="salvar-pub">Salvar alterações</button>';
         } else if (s === "Aprovado" && unidade && unidade.status !== "Publicado") {
-          html += '<button class="btn btn-primary" type="button" id="publicar">Publicar</button>';
+          centerGroup += '<button class="btn btn-primary" type="button" id="publicar">Publicar estabelecimento</button>';
         } else {
-          html += '<button class="btn btn-primary" type="submit" id="enviar">' + (s === "Rejeitado" ? "Reenviar para aprovação" : "Enviar para aprovação") + "</button>";
+          centerGroup += '<button class="btn btn-primary" type="submit" id="enviar">' + (s === "Rejeitado" ? "Reenviar para aprovação" : "Enviar para aprovação") + "</button>";
         }
       }
-      document.getElementById("acoes").innerHTML = html;
+      centerGroup += '</div>';
+      document.getElementById("acoes").innerHTML = html + centerGroup;
     }
 
     function setLocked(on) {
-      document.querySelectorAll("#form input, #form textarea, #form select, #add-esp").forEach(function (el) {
+      document.querySelectorAll("#form input, #form textarea, #form select, #add-esp, #hor-add, #hor-sim, #hor-nao, #hor-edit, #btn-gps, #btn-geocode, #btn-search-map").forEach(function (el) {
         el.disabled = on;
       });
     }
@@ -336,12 +700,16 @@
       var rua = form.rua.value.trim();
       var numero = form.numero.value.trim();
       var complemento = form.complemento.value.trim();
+      var bairro = (form.bairro ? form.bairro.value.trim() : "");
       var cidade = form.cidade.value.trim();
       var estado = form.estado.value;
-      var endereco = [rua + (numero ? ", " + numero : ""), complemento].filter(Boolean).join(" — ");
+      var endereco = [rua + (numero ? ", " + numero : ""), complemento, bairro].filter(Boolean).join(" — ");
       if (cidade) endereco = endereco ? endereco + " — " + cidade : cidade;
       var fone = form.telefone.value.trim();
       var urls = urlsFotos();
+      var latVal = parseFloat(form.latitude.value);
+      var lngVal = parseFloat(form.longitude.value);
+
       return {
         nome: form.nome.value.trim(),
         tipo: tipo,
@@ -352,10 +720,13 @@
         rua: rua,
         numero: numero,
         complemento: complemento,
+        bairro: bairro,
         cep: form.cep.value.trim(),
         cidade: cidade,
         estado: estado,
         endereco: endereco || cidade,
+        latitude: !isNaN(latVal) ? latVal : null,
+        longitude: !isNaN(lngVal) ? lngVal : null,
         especialidades: especialidades.slice(),
         horarios: horarios.map(function (h) { return Object.assign({}, h); }),
         fotos: urls,
@@ -383,8 +754,23 @@
     function salvar(destino) {
       if (!validarNome()) return;
       var dados = lerForm();
-      var ativo = dados.horarios.filter(function (h) { return h.active; })[0];
-      dados.horario = ativo ? ("Aberto das " + ativo.opensAt + " às " + ativo.closesAt) : "Horário a definir";
+      var ativos = dados.horarios.filter(function (h) { return h.active; });
+      var is24Global = document.getElementById("hor-global-24").checked || (ativos.length === 7 && ativos.every(function (h) { return h.atende24h; }));
+      if (is24Global) {
+        dados.horario = "Aberto 24 horas";
+        dados.aberto = true;
+      } else if (ativos.length > 0) {
+        var primeiro = ativos[0];
+        if (ativos.every(function (h) { return h.opensAt === primeiro.opensAt && h.closesAt === primeiro.closesAt; })) {
+          dados.horario = "Aberto das " + primeiro.opensAt + " às " + primeiro.closesAt;
+        } else {
+          dados.horario = ativos.length + " dias com atendimento";
+        }
+        dados.aberto = true;
+      } else {
+        dados.horario = "Fechado temporariamente";
+        dados.aberto = false;
+      }
       if (!unidade) {
         unidade = {
           id: proximoId(),
@@ -407,6 +793,8 @@
       } else if (destino === "publicado") {
         unidade.aprovacao = "Aprovado";
         unidade.status = "Publicado";
+      } else if (destino === "manter") {
+        unidade.dataEnvio = unidade.dataEnvio || new Date().toLocaleDateString("pt-BR");
       } else {
         unidade.aprovacao = "Rascunho";
         unidade.status = "Rascunho";
@@ -424,11 +812,98 @@
       renderFotos();
     }
 
+    // HANDLERS DE GPS E MAPA
+    document.getElementById("btn-gps").addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        WebSaude.ui.toast("Geolocalização não suportada pelo seu navegador.");
+        return;
+      }
+      WebSaude.ui.toast("Buscando sua localização GPS...");
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          var lat = pos.coords.latitude;
+          var lng = pos.coords.longitude;
+          setCoords(lat, lng);
+          WebSaude.ui.toast("Localização GPS capturada com sucesso!");
+        },
+        function (err) {
+          WebSaude.ui.toast("Não foi possível obter a localização. Permita o acesso ao GPS ou clique no mapa.");
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    });
+
+    document.getElementById("btn-geocode").addEventListener("click", function () {
+      var form = document.getElementById("form");
+      var rua = form.rua.value.trim();
+      var num = form.numero.value.trim();
+      var cid = form.cidade.value.trim();
+      var uf = form.estado.value;
+      var q = [rua, num, cid, uf, "Brasil"].filter(Boolean).join(", ");
+      if (!q || q === "Brasil") {
+        WebSaude.ui.toast("Preencha ao menos Rua e Cidade na etapa de Endereço.");
+        return;
+      }
+      buscarEnderecoNoMapa(q);
+    });
+
+    document.getElementById("btn-search-map").addEventListener("click", function () {
+      var q = document.getElementById("map-query").value.trim();
+      if (!q) return;
+      buscarEnderecoNoMapa(q);
+    });
+
+    document.getElementById("map-query").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("btn-search-map").click();
+      }
+    });
+
+    function buscarEnderecoNoMapa(query) {
+      WebSaude.ui.toast("Localizando no mapa...");
+      fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(query))
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res && res.length > 0) {
+            var lat = parseFloat(res[0].lat);
+            var lng = parseFloat(res[0].lon);
+            setCoords(lat, lng);
+            WebSaude.ui.toast("Endereço localizado no mapa!");
+          } else {
+            WebSaude.ui.toast("Endereço não encontrado automaticamente. Clique no ponto desejado no mapa.");
+          }
+        })
+        .catch(function () {
+          WebSaude.ui.toast("Não foi possível conectar ao serviço de busca. Você pode clicar no mapa.");
+        });
+    }
+
+    // Se o usuário editar as coordenadas manualmente nos inputs
+    document.getElementById("coord-lat").addEventListener("input", onManualCoords);
+    document.getElementById("coord-lng").addEventListener("input", onManualCoords);
+
+    function onManualCoords() {
+      var lat = parseFloat(document.getElementById("coord-lat").value);
+      var lng = parseFloat(document.getElementById("coord-lng").value);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        var badge = document.getElementById("coords-badge-txt");
+        if (badge) badge.textContent = "Coordenadas manuais";
+        var preview = document.getElementById("map-preview-coords");
+        if (preview) preview.textContent = "Coordenadas: " + lat.toFixed(4) + ", " + lng.toFixed(4);
+      }
+    }
+
     document.getElementById("form").addEventListener("keydown", function (e) {
       if (e.key !== "Enter") return;
       if (e.target && e.target.id === "esp-custom") {
         e.preventDefault();
         document.getElementById("add-esp").click();
+        return;
+      }
+      if (e.target && e.target.id === "map-query") {
+        e.preventDefault();
+        document.getElementById("btn-search-map").click();
         return;
       }
       if (e.target && e.target.tagName === "INPUT") e.preventDefault();
@@ -444,7 +919,13 @@
         especialidades = especialidades.filter(function (s) { return s !== nome; });
         customEsp = customEsp.filter(function (s) { return s !== nome; });
       }
+      var badge = document.getElementById("esp-count-badge");
+      if (badge) {
+        badge.textContent = especialidades.length + (especialidades.length === 1 ? " selecionada" : " selecionadas");
+      }
     });
+
+    document.getElementById("esp-busca").addEventListener("input", filterEsp);
 
     document.getElementById("add-esp").addEventListener("click", function () {
       var v = document.getElementById("esp-custom").value.trim();
@@ -455,16 +936,101 @@
       renderEsp();
     });
 
-    document.getElementById("lista-hor").addEventListener("change", function (e) {
-      var el = e.target.closest("[data-hor]");
-      if (!el) return;
-      var day = Number(el.getAttribute("data-hor"));
-      var campo = el.getAttribute("data-campo");
-      horarios.forEach(function (h) {
-        if (h.weekday !== day) return;
-        h[campo] = campo === "active" ? el.checked : el.value;
+    // EVENT LISTENERS DE HORÁRIOS
+    document.getElementById("hor-global-24").addEventListener("change", function () {
+      renderHor();
+      if (this.checked) {
+        WebSaude.ui.toast("Estabelecimento configurado como Aberto 24 Horas todos os dias.");
+      }
+    });
+
+    document.getElementById("builder-24h").addEventListener("change", function () {
+      document.getElementById("builder-time-fields").hidden = this.checked;
+    });
+
+    document.getElementById("btn-dias-uteis").addEventListener("click", function () {
+      document.querySelectorAll('input[name="builder_dia"]').forEach(function (box) {
+        var v = Number(box.value);
+        box.checked = (v >= 1 && v <= 5);
       });
-      if (campo === "active") renderHor();
+    });
+
+    document.getElementById("btn-dias-fim").addEventListener("click", function () {
+      document.querySelectorAll('input[name="builder_dia"]').forEach(function (box) {
+        var v = Number(box.value);
+        box.checked = (v === 6 || v === 0);
+      });
+    });
+
+    document.getElementById("btn-dias-todos").addEventListener("click", function () {
+      document.querySelectorAll('input[name="builder_dia"]').forEach(function (box) {
+        box.checked = true;
+      });
+    });
+
+    document.getElementById("btn-dias-limpar").addEventListener("click", function () {
+      document.querySelectorAll('input[name="builder_dia"]').forEach(function (box) {
+        box.checked = false;
+      });
+    });
+
+    document.getElementById("btn-aplicar-horario").addEventListener("click", function () {
+      var selecionados = [];
+      document.querySelectorAll('input[name="builder_dia"]:checked').forEach(function (box) {
+        selecionados.push(Number(box.value));
+      });
+      if (!selecionados.length) {
+        WebSaude.ui.toast("Selecione ao menos um dia da semana para aplicar.");
+        return;
+      }
+
+      var is24 = document.getElementById("builder-24h").checked;
+      var abre = document.getElementById("builder-abre").value;
+      var fecha = document.getElementById("builder-fecha").value;
+
+      if (!is24 && (!abre || !fecha)) {
+        WebSaude.ui.toast("Informe os horários de abertura e fechamento.");
+        return;
+      }
+
+      selecionados.forEach(function (diaIdx) {
+        var h = horarios.filter(function (item) { return item.weekday === diaIdx; })[0];
+        if (!h) {
+          h = { weekday: diaIdx };
+          horarios.push(h);
+        }
+        h.active = true;
+        h.atende24h = is24;
+        h.opensAt = is24 ? "00:00" : abre;
+        h.closesAt = is24 ? "23:59" : fecha;
+      });
+
+      renderHor();
+      WebSaude.ui.toast("Horário aplicado aos dias selecionados com sucesso!");
+    });
+
+    document.getElementById("grade-semanal").addEventListener("click", function (e) {
+      var fecharBtn = e.target.closest("[data-hor-fechar]");
+      var configBtn = e.target.closest("[data-hor-configurar]");
+
+      if (fecharBtn) {
+        var diaF = Number(fecharBtn.getAttribute("data-hor-fechar"));
+        var hf = horarios.filter(function (item) { return item.weekday === diaF; })[0];
+        if (hf) {
+          hf.active = false;
+          renderHor();
+          WebSaude.ui.toast(WebSaude.DIAS[diaF] + " marcado como Fechado.");
+        }
+      }
+
+      if (configBtn) {
+        var diaC = Number(configBtn.getAttribute("data-hor-configurar"));
+        document.querySelectorAll('input[name="builder_dia"]').forEach(function (box) {
+          box.checked = (Number(box.value) === diaC);
+        });
+        document.getElementById("hours-custom-builder").scrollIntoView({ behavior: "smooth", block: "center" });
+        WebSaude.ui.toast("Defina o horário e clique em 'Aplicar horário'.");
+      }
     });
 
     document.getElementById("perfil-input").addEventListener("change", function (e) {
@@ -492,7 +1058,7 @@
       e.preventDefault();
       if (locked || passo !== STEPS.length - 1) return;
       if (!salvar("pendente")) return;
-      WebSaude.ui.toast("Unidade enviada para aprovação.");
+      WebSaude.ui.toast("Estabelecimento enviado para aprovação.");
       setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
     });
 
@@ -504,12 +1070,17 @@
       if (e.target.id === "voltar") irPara(passo - 1);
       if (e.target.id === "rascunho") {
         if (!salvar("rascunho")) return;
-        WebSaude.ui.toast("Rascunho salvo.");
+        WebSaude.ui.toast("Rascunho salvo com sucesso.");
         setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
       }
       if (e.target.id === "publicar") {
         if (!salvar("publicado")) return;
-        WebSaude.ui.toast("Unidade publicada.");
+        WebSaude.ui.toast("Estabelecimento publicado.");
+        setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
+      }
+      if (e.target.id === "salvar-pub") {
+        if (!salvar("manter")) return;
+        WebSaude.ui.toast("Alterações salvas com sucesso.");
         setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
       }
       if (e.target.id === "retirar") {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Saúde — Minhas unidades</title>
+  <title>Web Saúde — Meus estabelecimentos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
@@ -11,55 +11,63 @@
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div class="page">
-    <div data-header="Minhas unidades" data-mode="gestor"></div>
+    <div data-header="Meus estabelecimentos" data-mode="gestor"></div>
     <main id="conteudo" class="wrap gestor">
       <div class="toolbar">
         <div>
-          <p class="admin-kicker">Gestor de unidades</p>
-          <h1 id="gestor-title">Minhas unidades</h1>
-          <p class="gestor-lead">Só você vê e administra as unidades desta conta. Acompanhe rascunho, envio, aprovação e publicação.</p>
+          <p class="admin-kicker">Gestor de estabelecimentos</p>
+          <h1>Meus estabelecimentos</h1>
+          <p class="gestor-lead">Veja o desempenho e edite os dados do seu estabelecimento.</p>
         </div>
-        <a class="btn btn-primary" href="cadastro-unidade.html">Adicionar nova unidade</a>
+        <a class="btn btn-primary" id="btn-add" href="cadastro-unidade.html">Adicionar um novo estabelecimento</a>
       </div>
 
-      <div class="card filter-bar filter-bar-units">
-        <label class="field filter-search">
-          <span>Buscar unidade</span>
-          <span class="input-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
-            <input class="input" id="busca" type="search" placeholder="Nome, cidade ou especialidade" autocomplete="off">
-          </span>
-        </label>
-        <fieldset class="filter-pills">
-          <legend>Situação</legend>
-          <label><input type="radio" name="filtroSit" value="" checked><span>Todas <b id="n-todas">0</b></span></label>
-          <label><input type="radio" name="filtroSit" value="Rascunho"><span>Rascunhos <b id="n-rasc">0</b></span></label>
-          <label><input type="radio" name="filtroSit" value="Pendente"><span>Pendentes <b id="n-pend">0</b></span></label>
-          <label><input type="radio" name="filtroSit" value="Aprovado"><span>Aprovadas <b id="n-apr">0</b></span></label>
-          <label><input type="radio" name="filtroSit" value="Rejeitado"><span>Rejeitadas <b id="n-rej">0</b></span></label>
-        </fieldset>
-        <div class="filter-bar-foot">
-          <p class="filter-meta" id="meta"></p>
-          <button class="btn btn-ghost btn-sm" type="button" id="resetFiltros" hidden>Limpar filtros</button>
-        </div>
-      </div>
+      <div id="lista-unidades" class="gestor-units"></div>
 
-      <div class="card admin-list">
-        <div class="admin-list-scroll" id="gestor-scroll">
-          <table class="admin-table admin-table-pending">
-            <caption class="sr-only">Unidades desta conta</caption>
-            <thead>
-              <tr>
-                <th scope="col">Unidade</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Situação</th>
-                <th scope="col"><span class="sr-only">Ações</span></th>
-              </tr>
-            </thead>
-            <tbody id="lista"></tbody>
-          </table>
+      <section class="gestor-dash" aria-labelledby="desempenho-title">
+        <div class="toolbar">
+          <h2 id="desempenho-title" class="section-title">Desempenho</h2>
+          <fieldset class="filter-pills">
+            <legend class="sr-only">Período</legend>
+            <label><input type="radio" name="periodo" value="semana"><span>Semana</span></label>
+            <label><input type="radio" name="periodo" value="mes" checked><span>Mês</span></label>
+            <label><input type="radio" name="periodo" value="ano"><span>Ano</span></label>
+          </fieldset>
         </div>
-      </div>
+        <div class="kpis">
+          <article class="card kpi">
+            <p class="kpi-label">Visualizações</p>
+            <p class="kpi-value" id="kpi-views">0</p>
+            <p class="kpi-hint" id="kpi-views-hint"></p>
+          </article>
+          <article class="card kpi">
+            <p class="kpi-label">Cliques em detalhes</p>
+            <p class="kpi-value" id="kpi-clicks">0</p>
+            <p class="kpi-hint">Na busca e na página do estabelecimento</p>
+          </article>
+          <article class="card kpi">
+            <p class="kpi-label">Contatos</p>
+            <p class="kpi-value" id="kpi-contacts">0</p>
+            <p class="kpi-hint">Telefone e e-mail no período</p>
+          </article>
+          <article class="card kpi">
+            <p class="kpi-label">Nota média</p>
+            <p class="kpi-value" id="kpi-nota">0</p>
+            <p class="kpi-hint" id="kpi-nota-hint"></p>
+          </article>
+        </div>
+        <article class="card chart-card">
+          <div>
+            <h3>Visualizações no período</h3>
+            <p class="chart-hint" id="chart-line-hint"></p>
+          </div>
+          <div class="line-chart" id="chart-line"></div>
+        </article>
+        <article class="card chart-card">
+          <h3>Últimas avaliações</h3>
+          <div id="lista-reviews"></div>
+        </article>
+      </section>
     </main>
     <div data-footer></div>
   </div>
@@ -85,32 +93,9 @@
     }
 
     var pendingAction = null;
-    var TITULO = {
-      "": "Minhas unidades",
-      Rascunho: "Rascunhos",
-      Pendente: "Aguardando aprovação",
-      Aprovado: "Aprovadas",
-      Rejeitado: "Rejeitadas"
-    };
-
-    function sit() {
-      var el = document.querySelector('input[name="filtroSit"]:checked');
-      return el ? el.value : "";
-    }
 
     function minhas() {
       return WebSaude.minhasUnidades();
-    }
-
-    function filtradas() {
-      var q = document.getElementById("busca").value.trim().toLowerCase();
-      var s = sit();
-      return minhas().filter(function (u) {
-        if (s && WebSaude.situacaoUnidade(u) !== s) return false;
-        if (!q) return true;
-        var specs = (u.especialidades || []).join(" ");
-        return (u.nome + " " + u.tipo + " " + u.cidade + " " + specs).toLowerCase().indexOf(q) >= 0;
-      });
     }
 
     function chipSit(u) {
@@ -124,17 +109,15 @@
 
     function acoes(u) {
       var s = WebSaude.situacaoUnidade(u);
-      var html = "";
+      var html = '<a class="btn btn-primary btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar informações</a>';
+      html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '&passo=4">Fotos</a>';
       if (s === "Rascunho" || s === "Rejeitado") {
-        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar</a>';
-        html += '<button class="btn btn-primary btn-sm" type="button" data-enviar="' + u.id + '">' + (s === "Rejeitado" ? "Reenviar" : "Enviar") + "</button>";
+        html += '<button class="btn btn-ghost btn-sm" type="button" data-enviar="' + u.id + '">' + (s === "Rejeitado" ? "Reenviar" : "Enviar") + "</button>";
         html += '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-excluir="' + u.id + '">Excluir</button>';
       } else if (s === "Pendente") {
-        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Ver cadastro</a>';
         html += '<button class="btn btn-ghost btn-sm" type="button" data-retirar="' + u.id + '">Retirar envio</button>';
       } else {
-        html += '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver</a>';
-        html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar</a>';
+        html += '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver como paciente</a>';
         if (u.status !== "Publicado") {
           html += '<button class="btn btn-primary btn-sm" type="button" data-publicar="' + u.id + '">Publicar</button>';
         }
@@ -142,61 +125,83 @@
       return html;
     }
 
-    function linha(u) {
+    function cardUnidade(u) {
       var local = [u.cidade, u.estado].filter(Boolean).join(", ");
       var foto = (u.fotos && u.fotos[0]) || u.foto || "";
       var motivo = WebSaude.situacaoUnidade(u) === "Rejeitado" && u.motivoRejeicao
-        ? '<small class="unit-motivo">Motivo: ' + esc(u.motivoRejeicao) + "</small>"
+        ? '<p class="unit-motivo">Motivo: ' + esc(u.motivoRejeicao) + "</p>"
         : "";
-      return "<tr>" +
-        '<th scope="row"><div class="unit-cell"><img src="' + esc(foto) + '" alt="">' +
-        "<div><div>" + esc(u.nome) + "</div><small>" + esc(local) + "</small>" + motivo + "</div></div></th>" +
-        '<td data-label="Tipo">' + esc(u.tipo) + "</td>" +
-        '<td data-label="Situação">' + chipSit(u) + "</td>" +
-        '<td><div class="row-actions">' + acoes(u) + "</div></td></tr>";
+      return '<article class="card gestor-unit">' +
+        '<img src="' + esc(foto) + '" alt="">' +
+        '<div class="gestor-unit-body">' +
+        '<div class="gestor-unit-top"><h2>' + esc(u.nome) + "</h2>" + chipSit(u) + "</div>" +
+        "<p>" + esc(u.tipo) + " · " + esc(local) + "</p>" +
+        motivo +
+        '<div class="row-actions">' + acoes(u) + "</div>" +
+        "</div></article>";
     }
 
-    function vazio() {
-      var s = sit();
-      if (s === "Pendente") return "Nenhuma unidade aguardando aprovação.";
-      if (s === "Rascunho") return "Nenhum rascunho nesta conta.";
-      if (s === "Rejeitado") return "Nenhuma unidade rejeitada.";
-      if (s === "Aprovado") return "Nenhuma unidade aprovada.";
-      return "Você ainda não cadastrou unidades.";
+    function periodoAtual() {
+      var el = document.querySelector('input[name="periodo"]:checked');
+      return el ? el.value : "mes";
     }
 
-    function contar() {
-      var all = minhas();
-      document.getElementById("n-todas").textContent = all.length;
-      document.getElementById("n-rasc").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Rascunho"; }).length;
-      document.getElementById("n-pend").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Pendente"; }).length;
-      document.getElementById("n-apr").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Aprovado"; }).length;
-      document.getElementById("n-rej").textContent = all.filter(function (u) { return WebSaude.situacaoUnidade(u) === "Rejeitado"; }).length;
+    function fmt(n) {
+      return Number(n).toLocaleString("pt-BR");
     }
 
-    var view = WebSaude.ui.renderInfinite({
-      target: "#lista",
-      root: "#gestor-scroll",
-      sentinel: "tr",
-      colspan: 4,
-      perPage: 5,
-      items: filtradas,
-      render: linha,
-      empty: function () {
-        return '<tr><td colspan="4"><p class="admin-empty">' + vazio() + "</p></td></tr>";
-      },
-      onMeta: function (shown, total, hasMore) {
-        document.getElementById("gestor-title").textContent = TITULO[sit()] || "Minhas unidades";
-        document.getElementById("meta").textContent = total
-          ? (hasMore ? "Mostrando " + shown + " de " + total + " · continue rolando" : total + (total === 1 ? " unidade" : " unidades"))
-          : vazio();
-        document.getElementById("resetFiltros").hidden = !(document.getElementById("busca").value.trim() || sit());
-      }
-    });
+    function linhaTempo(pontos) {
+      var w = 320;
+      var h = 160;
+      var pad = 18;
+      var max = Math.max.apply(null, pontos.map(function (p) { return p.views; }).concat([1]));
+      var step = pontos.length > 1 ? (w - pad * 2) / (pontos.length - 1) : 0;
+      var coords = pontos.map(function (p, i) {
+        var x = pad + i * step;
+        var y = h - pad - (p.views / max) * (h - pad * 2);
+        return x.toFixed(1) + "," + y.toFixed(1);
+      });
+      var dots = pontos.map(function (p, i) {
+        var xy = coords[i].split(",");
+        return '<circle cx="' + xy[0] + '" cy="' + xy[1] + '" r="3.5" fill="#0f766e"/>' +
+          '<text x="' + xy[0] + '" y="' + (h - 4) + '" text-anchor="middle" font-size="9" fill="#64748b">' + esc(p.label) + "</text>";
+      }).join("");
+      return '<svg viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="Visualizações no período">' +
+        '<polyline fill="none" stroke="#0f766e" stroke-width="2.5" points="' + coords.join(" ") + '"/>' +
+        dots + "</svg>";
+    }
 
     function refresh() {
-      contar();
-      view.refresh();
+      var all = minhas();
+      // Botão sempre visível
+      document.getElementById("btn-add").hidden = false;
+      document.getElementById("lista-unidades").innerHTML = all.length
+        ? all.map(cardUnidade).join("")
+        : '<p class="center-note">Você ainda não cadastrou um estabelecimento.</p>';
+
+      var p = periodoAtual();
+      var tot = WebSaude.totaisPeriodo(all, p);
+      var nomeP = WebSaude.PERIODOS[p].label;
+      document.getElementById("kpi-views").textContent = fmt(tot.views);
+      document.getElementById("kpi-clicks").textContent = fmt(tot.clicks);
+      document.getElementById("kpi-contacts").textContent = fmt(tot.contacts);
+      document.getElementById("kpi-nota").textContent = tot.nota ? tot.nota.toFixed(1).replace(".", ",") : "—";
+      document.getElementById("kpi-views-hint").textContent = "+" + tot.delta + "% vs " + nomeP + " anterior";
+      document.getElementById("kpi-nota-hint").textContent = tot.nota ? "Das avaliações publicadas" : "Ainda sem avaliações";
+      document.getElementById("chart-line-hint").textContent = nomeP;
+      document.getElementById("chart-line").innerHTML = linhaTempo(tot.pontos);
+
+      var ids = all.map(function (u) { return u.id; });
+      var reviews = WebSaude.avaliacoes.filter(function (a) { return ids.indexOf(a.unidadeId) >= 0; });
+      document.getElementById("lista-reviews").innerHTML = reviews.length
+        ? '<ul class="review-mini">' + reviews.slice(0, 4).map(function (a) {
+          var un = all.filter(function (u) { return u.id === a.unidadeId; })[0];
+          return "<li><img src=\"" + esc(a.foto) + '" alt="">' +
+            "<div><strong>" + esc(a.nome) + "</strong> · " + "★".repeat(a.nota) +
+            "<p>" + esc(a.texto) + "</p>" +
+            "<small>" + esc(un ? un.nome : "") + " · " + esc(a.data) + "</small></div></li>";
+        }).join("") + "</ul>"
+        : '<p class="help">Ainda não há avaliações.</p>';
     }
 
     function porId(id) {
@@ -225,7 +230,7 @@
       if (run) run();
     });
 
-    document.getElementById("lista").addEventListener("click", function (e) {
+    document.getElementById("lista-unidades").addEventListener("click", function (e) {
       var enviar = e.target.closest("[data-enviar]");
       var retirar = e.target.closest("[data-retirar]");
       var publicar = e.target.closest("[data-publicar]");
@@ -237,7 +242,7 @@
         u.status = "Rascunho";
         u.dataEnvio = new Date().toLocaleDateString("pt-BR");
         WebSaude.persistUnidades();
-        WebSaude.ui.toast(u.nome + " enviada para aprovação.");
+        WebSaude.ui.toast(u.nome + " enviado para aprovação.");
         refresh();
       }
       if (retirar) {
@@ -251,45 +256,39 @@
             r.aprovacao = "Rascunho";
             r.status = "Rascunho";
             WebSaude.persistUnidades();
-            WebSaude.ui.toast("Envio retirado. A unidade voltou a rascunho.");
+            WebSaude.ui.toast("Envio retirado. O estabelecimento voltou a rascunho.");
             refresh();
           }
         });
       }
       if (publicar) {
-        var p = porId(Number(publicar.getAttribute("data-publicar")));
-        if (!p) return;
-        p.status = "Publicado";
+        var pub = porId(Number(publicar.getAttribute("data-publicar")));
+        if (!pub) return;
+        pub.status = "Publicado";
         WebSaude.persistUnidades();
-        WebSaude.ui.toast(p.nome + " publicada.");
+        WebSaude.ui.toast(pub.nome + " publicado.");
         refresh();
       }
       if (excluir) {
         var x = porId(Number(excluir.getAttribute("data-excluir")));
         if (!x) return;
         confirmar({
-          titulo: "Excluir unidade",
+          titulo: "Excluir estabelecimento",
           texto: "Excluir “" + x.nome + "”? Esta ação não pode ser desfeita neste protótipo.",
           rotulo: "Excluir",
           perigo: true,
           onOk: function () {
             WebSaude.unidades = WebSaude.unidades.filter(function (item) { return item.id !== x.id; });
             WebSaude.persistUnidades();
-            WebSaude.ui.toast("Unidade excluída.");
+            WebSaude.ui.toast("Estabelecimento excluído.");
             refresh();
           }
         });
       }
     });
 
-    document.getElementById("busca").addEventListener("input", refresh);
-    document.querySelectorAll('input[name="filtroSit"]').forEach(function (el) {
+    document.querySelectorAll('input[name="periodo"]').forEach(function (el) {
       el.addEventListener("change", refresh);
-    });
-    document.getElementById("resetFiltros").addEventListener("click", function () {
-      document.getElementById("busca").value = "";
-      document.querySelector('input[name="filtroSit"][value=""]').checked = true;
-      refresh();
     });
 
     refresh();

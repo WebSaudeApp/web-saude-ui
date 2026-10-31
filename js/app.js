@@ -46,7 +46,7 @@
 
   function header(active, mode) {
     const links = [["index.html", "Início"]];
-    if (mode === "gestor") links.push(["minhas-unidades.html", "Minhas unidades"]);
+    if (mode === "gestor") links.push(["minhas-unidades.html", "Meus estabelecimentos"]);
     let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a>';
     if (mode === "user") extra = '<a class="btn btn-ghost" href="perfil.html">Maria Silva</a>';
     if (mode === "gestor") extra = '<a class="btn btn-ghost" href="minhas-unidades.html">Dra. Maria Silva</a>';
@@ -254,6 +254,75 @@
     });
   });
 
+  function multiCheck(opts) {
+    var el = typeof opts.target === "string" ? document.querySelector(opts.target) : opts.target;
+    var items = opts.items || [];
+    var selected = [];
+    el.classList.add("msel");
+    el.innerHTML =
+      '<button class="msel-btn" type="button" aria-expanded="false" aria-haspopup="listbox">' +
+      '<span class="msel-label">' + (opts.empty || "Todas") + "</span></button>" +
+      '<div class="msel-panel" hidden>' +
+      '<input class="input" type="search" placeholder="' + (opts.search || "Buscar especialidade") + '" autocomplete="off">' +
+      '<div class="msel-list">' + items.map(function (s) {
+        return '<label class="check" data-esp="' + s.replace(/"/g, "&quot;") + '"><input type="checkbox" value="' + s.replace(/"/g, "&quot;") + '"> ' + s + "</label>";
+      }).join("") + "</div></div>";
+    var btn = el.querySelector(".msel-btn");
+    var panel = el.querySelector(".msel-panel");
+    var search = el.querySelector("input[type=search]");
+    var label = el.querySelector(".msel-label");
+    function syncLabel() {
+      if (!selected.length) label.textContent = opts.empty || "Todas";
+      else if (selected.length === 1) label.textContent = selected[0];
+      else label.textContent = selected.length + " especialidades";
+    }
+    function setOpen(on) {
+      panel.hidden = !on;
+      btn.setAttribute("aria-expanded", on ? "true" : "false");
+      if (on) search.focus();
+    }
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(panel.hidden);
+    });
+    search.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") e.preventDefault();
+    });
+    search.addEventListener("input", function () {
+      var q = WebSaude.normEsp(search.value);
+      el.querySelectorAll("[data-esp]").forEach(function (lab) {
+        lab.hidden = !!(q && WebSaude.normEsp(lab.getAttribute("data-esp")).indexOf(q) < 0);
+      });
+    });
+    el.querySelectorAll("input[type=checkbox]").forEach(function (c) {
+      c.addEventListener("change", function () {
+        var v = c.value;
+        if (c.checked) {
+          if (selected.indexOf(v) < 0) selected.push(v);
+        } else {
+          selected = selected.filter(function (s) { return s !== v; });
+        }
+        syncLabel();
+        if (opts.onChange) opts.onChange(selected.slice());
+      });
+    });
+    document.addEventListener("click", function (e) {
+      if (!el.contains(e.target)) setOpen(false);
+    });
+    return {
+      values: function () { return selected.slice(); },
+      clear: function () {
+        selected = [];
+        el.querySelectorAll("input[type=checkbox]").forEach(function (c) { c.checked = false; });
+        search.value = "";
+        el.querySelectorAll("[data-esp]").forEach(function (lab) { lab.hidden = false; });
+        setOpen(false);
+        syncLabel();
+      }
+    };
+  }
+
   WebSaude.ui = {
     params: params,
     toast: toast,
@@ -270,7 +339,8 @@
     bindFavs: bindFavs,
     bindPager: bindPager,
     renderList: renderList,
-    renderInfinite: renderInfinite
+    renderInfinite: renderInfinite,
+    multiCheck: multiCheck
   };
 
   document.querySelectorAll("[data-header]").forEach(function (el) {

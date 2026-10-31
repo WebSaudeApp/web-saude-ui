@@ -21,17 +21,8 @@
               <option>Clínica</option>
             </select>
           </label>
-          <label class="field"><span>Especialidade</span>
-            <select class="select" name="especialidade">
-              <option value="">Todas</option>
-              <option>Cardiologia</option>
-              <option>Clínica Geral</option>
-              <option>Dermatologia</option>
-              <option>Emergência</option>
-              <option>Neurologia</option>
-              <option>Ortopedia</option>
-              <option>Pediatria</option>
-            </select>
+          <label class="field home-esp"><span>Especialidade</span>
+            <div id="filtro-esp"></div>
           </label>
           <label class="field"><span>Cidade</span>
             <input class="input" name="cidade" placeholder="Nome da cidade">
@@ -109,18 +100,25 @@
   <script>
     var filtros = document.getElementById("filtros");
     var busca = document.getElementById("busca");
+    var espFiltro = WebSaude.ui.multiCheck({
+      target: "#filtro-esp",
+      items: WebSaude.ESPECIALIDADES,
+      empty: "Todas",
+      onChange: function () { lista.refresh(); }
+    });
 
     function norm(s) {
-      return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+      return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     function filtrar() {
       var f = filtros.elements;
       var q = norm(busca.elements.q.value.trim());
       var cidade = norm(f.cidade.value.trim());
+      var especs = espFiltro.values();
       return WebSaude.unidades.filter(function (u) {
         if (f.tipo.value && norm(u.tipo).indexOf(norm(f.tipo.value)) !== 0) return false;
-        if (f.especialidade.value && u.especialidades.indexOf(f.especialidade.value) < 0) return false;
+        if (!WebSaude.unidadeTemEsp(u, especs)) return false;
         if (cidade && norm(u.cidade).indexOf(cidade) < 0) return false;
         if (f.estado.value && u.estado !== f.estado.value) return false;
         if (q && norm(u.nome).indexOf(q) < 0 && !u.especialidades.some(function (s) { return norm(s).indexOf(q) >= 0; })) return false;
@@ -156,7 +154,11 @@
 
     filtros.addEventListener("change", function () { lista.refresh(); });
     filtros.elements.cidade.addEventListener("input", function () { lista.refresh(); });
-    filtros.addEventListener("reset", function () { busca.reset(); setTimeout(function () { lista.refresh(); }, 0); });
+    filtros.addEventListener("reset", function () {
+      busca.reset();
+      espFiltro.clear();
+      setTimeout(function () { lista.refresh(); }, 0);
+    });
     busca.addEventListener("submit", function (e) { e.preventDefault(); lista.refresh(); });
     document.getElementById("loc").addEventListener("click", function () {
       WebSaude.ui.toast("Localização disponível em breve.");
