@@ -34,21 +34,16 @@
             <label><input type="radio" name="periodo" value="ano"><span>Ano</span></label>
           </fieldset>
         </div>
-        <div class="kpis">
+        <div class="kpis kpis-3">
           <article class="card kpi">
             <p class="kpi-label">Visualizações</p>
             <p class="kpi-value" id="kpi-views">0</p>
             <p class="kpi-hint" id="kpi-views-hint"></p>
           </article>
           <article class="card kpi">
-            <p class="kpi-label">Cliques em detalhes</p>
-            <p class="kpi-value" id="kpi-clicks">0</p>
-            <p class="kpi-hint">Na busca e na página do estabelecimento</p>
-          </article>
-          <article class="card kpi">
-            <p class="kpi-label">Contatos</p>
-            <p class="kpi-value" id="kpi-contacts">0</p>
-            <p class="kpi-hint">Telefone e e-mail no período</p>
+            <p class="kpi-label">Total de avaliações</p>
+            <p class="kpi-value" id="kpi-total-avaliacoes">0</p>
+            <p class="kpi-hint" id="kpi-total-avaliacoes-hint">Recebidas dos pacientes</p>
           </article>
           <article class="card kpi">
             <p class="kpi-label">Nota média</p>
@@ -102,20 +97,18 @@
       var s = WebSaude.situacaoUnidade(u);
       if (s === "Aprovado" && u.status === "Publicado") return '<span class="chip chip-ok">Publicada</span>';
       if (s === "Aprovado") return '<span class="chip chip-ok">Aprovada · publicar</span>';
-      if (s === "Pendente") return '<span class="chip chip-warn">Aguardando aprovação</span>';
       if (s === "Rejeitado") return '<span class="chip chip-muted">Rejeitada</span>';
-      return '<span class="chip chip-muted">Rascunho</span>';
+      return '<span class="chip chip-warn">Aguardando aprovação</span>';
     }
 
     function acoes(u) {
       var s = WebSaude.situacaoUnidade(u);
       var html = '<a class="btn btn-primary btn-sm" href="cadastro-unidade.html?id=' + u.id + '">Editar informações</a>';
-      html += '<a class="btn btn-ghost btn-sm" href="cadastro-unidade.html?id=' + u.id + '&passo=4">Fotos</a>';
-      if (s === "Rascunho" || s === "Rejeitado") {
-        html += '<button class="btn btn-ghost btn-sm" type="button" data-enviar="' + u.id + '">' + (s === "Rejeitado" ? "Reenviar" : "Enviar") + "</button>";
+      if (s === "Rejeitado") {
+        html += '<button class="btn btn-ghost btn-sm" type="button" data-enviar="' + u.id + '">Reenviar</button>';
         html += '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-excluir="' + u.id + '">Excluir</button>';
       } else if (s === "Pendente") {
-        html += '<button class="btn btn-ghost btn-sm" type="button" data-retirar="' + u.id + '">Retirar envio</button>';
+        html += '<button class="btn btn-ghost btn-sm btn-danger" type="button" data-excluir="' + u.id + '">Excluir</button>';
       } else {
         html += '<a class="btn btn-ghost btn-sm" href="detalhes.html?id=' + u.id + '">Ver como paciente</a>';
         if (u.status !== "Publicado") {
@@ -183,8 +176,7 @@
       var tot = WebSaude.totaisPeriodo(all, p);
       var nomeP = WebSaude.PERIODOS[p].label;
       document.getElementById("kpi-views").textContent = fmt(tot.views);
-      document.getElementById("kpi-clicks").textContent = fmt(tot.clicks);
-      document.getElementById("kpi-contacts").textContent = fmt(tot.contacts);
+      
       document.getElementById("kpi-nota").textContent = tot.nota ? tot.nota.toFixed(1).replace(".", ",") : "—";
       document.getElementById("kpi-views-hint").textContent = "+" + tot.delta + "% vs " + nomeP + " anterior";
       document.getElementById("kpi-nota-hint").textContent = tot.nota ? "Das avaliações publicadas" : "Ainda sem avaliações";
@@ -193,6 +185,11 @@
 
       var ids = all.map(function (u) { return u.id; });
       var reviews = WebSaude.avaliacoes.filter(function (a) { return ids.indexOf(a.unidadeId) >= 0; });
+      var totalAvaliacoes = reviews.length;
+      var elTotal = document.getElementById("kpi-total-avaliacoes");
+      if (elTotal) elTotal.textContent = fmt(totalAvaliacoes);
+      var elTotalHint = document.getElementById("kpi-total-avaliacoes-hint");
+      if (elTotalHint) elTotalHint.textContent = totalAvaliacoes === 1 ? "1 avaliação de paciente" : totalAvaliacoes + " avaliações de pacientes";
       document.getElementById("lista-reviews").innerHTML = reviews.length
         ? '<ul class="review-mini">' + reviews.slice(0, 4).map(function (a) {
           var un = all.filter(function (u) { return u.id === a.unidadeId; })[0];
@@ -239,26 +236,13 @@
         var u = porId(Number(enviar.getAttribute("data-enviar")));
         if (!u) return;
         u.aprovacao = "Pendente";
-        u.status = "Rascunho";
+        u.status = "Pendente";
         u.dataEnvio = new Date().toLocaleDateString("pt-BR");
         WebSaude.persistUnidades();
         WebSaude.ui.toast(u.nome + " enviado para aprovação.");
         refresh();
       }
-      if (retirar) {
-        var r = porId(Number(retirar.getAttribute("data-retirar")));
-        if (!r) return;
-        confirmar({
-          titulo: "Retirar envio",
-          texto: "Retirar “" + r.nome + "” da fila de aprovação? Ela volta para rascunho.",
-          rotulo: "Retirar",
-          onOk: function () {
-            r.aprovacao = "Rascunho";
-            r.status = "Rascunho";
-            WebSaude.persistUnidades();
-            WebSaude.ui.toast("Envio retirado. O estabelecimento voltou a rascunho.");
-            refresh();
-          }
+
         });
       }
       if (publicar) {

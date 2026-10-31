@@ -161,8 +161,8 @@
           <header class="unit-block-head">
             <span class="how-num">3</span>
             <div>
-              <h2>Localização no Mapa e Coordenadas GPS</h2>
-              <p>Posicione o ponto exato da entrada da clínica para alimentar a busca por proximidade geográfica.</p>
+              <h2>Localização</h2>
+              <p>Informe a latitude e longitude do estabelecimento para alimentar a busca por proximidade e rotas de GPS.</p>
             </div>
           </header>
 
@@ -214,12 +214,12 @@
 
             <div class="map-coords-grid">
               <label class="field" style="margin:0;">
-                <span>Latitude (ex.: -23.550520)</span>
-                <input class="input" name="latitude" id="coord-lat" placeholder="-23.550520" step="any" type="number">
+                <span>Latitude * (ex.: -23.550520)</span>
+                <input class="input" name="latitude" id="coord-lat" placeholder="-23.550520" step="any" type="number" required>
               </label>
               <label class="field" style="margin:0;">
-                <span>Longitude (ex.: -46.633308)</span>
-                <input class="input" name="longitude" id="coord-lng" placeholder="-46.633308" step="any" type="number">
+                <span>Longitude * (ex.: -46.633308)</span>
+                <input class="input" name="longitude" id="coord-lng" placeholder="-46.633308" step="any" type="number" required>
               </label>
             </div>
           </div>
@@ -314,7 +314,7 @@
                   <span>Aberto 24 horas nestes dias</span>
                 </label>
 
-                <div id="builder-time-fields" style="display:flex; align-items:flex-end; gap:10px;">
+                <div id="builder-time-fields" class="hours-time-fields">
                   <label class="field" style="margin:0;">
                     <span>Abre às</span>
                     <input class="input" id="builder-abre" type="time" value="08:00">
@@ -344,31 +344,31 @@
           </div>
         </section>
 
-        <!-- ETAPA 6: FOTOS -->
+        <!-- ETAPA 6: LOGO & GALERIA -->
         <section class="card panel unit-block" id="sec-fotos" data-step="5" hidden>
           <header class="unit-block-head">
             <span class="how-num">6</span>
             <div>
-              <h2>Fotos e identidade visual</h2>
-              <p>Fotos atraentes aumentam expressivamente a credibilidade e a preferência dos pacientes.</p>
+              <h2>Logo e galeria de fotos</h2>
+              <p>A logo oficial é obrigatória para identificar o estabelecimento. A galeria de fotos é opcional.</p>
             </div>
           </header>
 
           <div class="photo-section-card">
             <div class="photo-section-head">
               <div>
-                <h3 style="margin:0 0 4px;">Foto principal (Capa / Fachada) *</h3>
-                <p class="help" style="margin:0;">Imagem exibida no topo do perfil e em destaque nos resultados de busca.</p>
+                <h3 style="margin:0 0 4px;">Logo do estabelecimento *</h3>
+                <p class="help" style="margin:0;">Logotipo oficial exibido no perfil e nos resultados de busca (obrigatório).</p>
               </div>
               <label class="btn btn-primary photo-btn">
-                <input id="perfil-input" type="file" accept="image/*">
-                <span id="perfil-btn-label">Escolher foto de capa</span>
+                <input id="perfil-input" type="file" accept="image/*" required>
+                <span id="perfil-btn-label">Escolher logo</span>
               </label>
             </div>
             <div class="photo-perfil-preview-lg" id="perfil-preview">
               <div class="photo-empty-state">
                 <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span>Nenhuma foto de capa selecionada</span>
+                <span>Nenhuma logo selecionada</span>
               </div>
             </div>
           </div>
@@ -376,8 +376,8 @@
           <div class="photo-section-card">
             <div class="photo-section-head">
               <div>
-                <h3 style="margin:0 0 4px;">Galeria de fotos do estabelecimento</h3>
-                <p class="help" style="margin:0;">Recepção, consultórios, equipamentos médicos e área de espera.</p>
+                <h3 style="margin:0 0 4px;">Galeria de fotos (Opcional)</h3>
+                <p class="help" style="margin:0;">Opcional. Fotos do ambiente, consultórios, recepção e equipamentos.</p>
               </div>
               <label class="btn btn-ghost photo-btn">
                 <input id="galeria-input" type="file" accept="image/*" multiple>
@@ -385,7 +385,7 @@
               </label>
             </div>
             <div class="photo-grid" id="fotos-grid"></div>
-            <p class="help" id="galeria-vazia" style="margin-top:6px;">Nenhuma foto na galeria ainda.</p>
+            <p class="help" id="galeria-vazia" style="margin-top:6px;">Nenhuma foto na galeria ainda (opcional).</p>
           </div>
         </section>
 
@@ -400,7 +400,7 @@
   <script src="js/app.js"></script>
   <script>
     var STEPS = ["sec-info", "sec-end", "sec-map", "sec-esp", "sec-hor", "sec-fotos"];
-    var STEP_LABELS = ["Identificação", "Endereço", "Mapa & GPS", "Especialidades", "Horários", "Fotos & Fachada"];
+    var STEP_LABELS = ["Identificação", "Endereço", "Localização", "Especialidades", "Horários", "Logo & Galeria"];
     var passo = 0;
     var params = WebSaude.ui.params();
     var editId = Number(params.get("id") || 0);
@@ -520,6 +520,10 @@
 
 
       renderAcoes();
+      var activeStep = document.querySelector("#stepper .is-on");
+      if (activeStep && typeof activeStep.scrollIntoView === "function") {
+        try { activeStep.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); } catch (e) {}
+      }
       document.getElementById("conteudo").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -530,7 +534,7 @@
       if (s === "Pendente") {
         ban.hidden = false;
         ban.className = "callout callout-warn";
-        ban.innerHTML = "<strong>Em análise.</strong> Você pode ajustar dados e fotos. Salve as alterações ou retire o envio.";
+        ban.innerHTML = "<strong>Em análise.</strong> Você pode ajustar dados e fotos. Salve as alterações quando terminar.";
       } else if (s === "Rejeitado") {
         ban.hidden = false;
         ban.className = "callout callout-danger";
@@ -629,14 +633,14 @@
     function renderFotos() {
       var box = document.getElementById("perfil-preview");
       if (perfil) {
-        box.innerHTML = '<img src="' + esc(perfil.url) + '" alt="Foto de capa">' +
-          '<button type="button" class="photo-thumb-x" id="del-perfil" aria-label="Remover foto de capa">×</button>';
-        document.getElementById("perfil-btn-label").textContent = "Alterar foto de capa";
+        box.innerHTML = '<img src="' + esc(perfil.url) + '" alt="Logo do estabelecimento">' +
+          '<button type="button" class="photo-thumb-x" id="del-perfil" aria-label="Remover logo">×</button>';
+        document.getElementById("perfil-btn-label").textContent = "Alterar logo";
       } else {
         box.innerHTML = '<div class="photo-empty-state">' +
           '<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' +
-          '<span>Nenhuma foto de capa selecionada</span></div>';
-        document.getElementById("perfil-btn-label").textContent = "Escolher foto de capa";
+          '<span>Nenhuma logo selecionada</span></div>';
+        document.getElementById("perfil-btn-label").textContent = "Escolher logo";
       }
       document.getElementById("fotos-grid").innerHTML = galeria.map(function (f) {
         return '<div class="photo-thumb">' +
@@ -648,25 +652,22 @@
     }
 
     function renderAcoes() {
-      var s = unidade ? WebSaude.situacaoUnidade(unidade) : "Rascunho";
+      var s = unidade ? WebSaude.situacaoUnidade(unidade) : "Novo";
       var ultimo = passo === STEPS.length - 1;
       var html = "";
       if (passo > 0) html += '<button class="btn btn-ghost" type="button" id="voltar">← Voltar</button>';
       else html += '<a class="btn btn-ghost" href="minhas-unidades.html">Cancelar</a>';
 
-      var centerGroup = '<div style="display:flex;gap:10px;">';
-      if (s === "Pendente") {
-        centerGroup += '<button class="btn btn-ghost" type="button" id="retirar">Retirar envio</button>';
-        centerGroup += '<button class="btn btn-ghost" type="button" id="salvar-pub">Salvar alterações</button>';
-        if (!ultimo) centerGroup += '<button class="btn btn-primary" type="button" id="proximo">Próxima etapa →</button>';
+      var centerGroup = '<div class="actions-group-right" style="display:flex;gap:10px;">';
+      if (!ultimo) {
+        centerGroup += '<button class="btn btn-primary" type="button" id="proximo">Próxima etapa →</button>';
       } else {
-        centerGroup += '<button class="btn btn-ghost" type="button" id="rascunho">Salvar rascunho</button>';
-        if (!ultimo) {
-          centerGroup += '<button class="btn btn-primary" type="button" id="proximo">Próxima etapa →</button>';
-        } else if (s === "Aprovado" && unidade && unidade.status === "Publicado") {
+        if (s === "Aprovado" && unidade && unidade.status === "Publicado") {
           centerGroup += '<button class="btn btn-primary" type="button" id="salvar-pub">Salvar alterações</button>';
         } else if (s === "Aprovado" && unidade && unidade.status !== "Publicado") {
           centerGroup += '<button class="btn btn-primary" type="button" id="publicar">Publicar estabelecimento</button>';
+        } else if (s === "Pendente") {
+          centerGroup += '<button class="btn btn-primary" type="button" id="salvar-pub">Salvar alterações</button>';
         } else {
           centerGroup += '<button class="btn btn-primary" type="submit" id="enviar">' + (s === "Rejeitado" ? "Reenviar para aprovação" : "Enviar para aprovação") + "</button>";
         }
@@ -734,16 +735,117 @@
       };
     }
 
-    function validarNome() {
-      var nome = document.getElementById("form").nome.value.trim();
-      var err = document.getElementById("nome-error");
-      if (!nome) {
-        err.hidden = false;
-        irPara(0);
-        document.getElementById("form").nome.focus();
-        return false;
+    function validarEtapa(etapaIdx) {
+      var form = document.getElementById("form");
+
+      if (etapaIdx === 0) { // Identificação
+        var nome = form.nome.value.trim();
+        var err = document.getElementById("nome-error");
+        if (!nome) {
+          if (err) err.hidden = false;
+          WebSaude.ui.toast("Informe o nome do estabelecimento.");
+          form.nome.focus();
+          return false;
+        }
+        if (err) err.hidden = true;
+
+        var tipo = form.querySelector('input[name="tipo"]:checked');
+        if (!tipo) {
+          WebSaude.ui.toast("Selecione o tipo de estabelecimento (Hospital ou Clínica).");
+          return false;
+        }
+
+        var email = form.email.value.trim();
+        if (!email) {
+          WebSaude.ui.toast("Informe o e-mail do estabelecimento.");
+          form.email.focus();
+          return false;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          WebSaude.ui.toast("Informe um e-mail válido.");
+          form.email.focus();
+          return false;
+        }
+
+        var tel = form.telefone.value.trim();
+        if (!tel) {
+          WebSaude.ui.toast("Informe o telefone ou WhatsApp do estabelecimento.");
+          form.telefone.focus();
+          return false;
+        }
       }
-      err.hidden = true;
+
+      if (etapaIdx === 1) { // Endereço
+        var cidade = form.cidade.value.trim();
+        var estado = form.estado.value;
+        if (!cidade) {
+          WebSaude.ui.toast("Informe a cidade do estabelecimento.");
+          form.cidade.focus();
+          return false;
+        }
+        if (!estado) {
+          WebSaude.ui.toast("Selecione o estado (UF).");
+          form.estado.focus();
+          return false;
+        }
+      }
+
+      if (etapaIdx === 2) { // Localização (Latitude e Longitude)
+        var latStr = document.getElementById("coord-lat").value.trim();
+        var lngStr = document.getElementById("coord-lng").value.trim();
+        if (!latStr || !lngStr) {
+          WebSaude.ui.toast("A localização (Latitude e Longitude) é obrigatória.");
+          if (!latStr) document.getElementById("coord-lat").focus();
+          else document.getElementById("coord-lng").focus();
+          return false;
+        }
+        var lat = parseFloat(latStr);
+        var lng = parseFloat(lngStr);
+        if (isNaN(lat) || lat < -90 || lat > 90) {
+          WebSaude.ui.toast("Informe uma Latitude válida (entre -90 e 90).");
+          document.getElementById("coord-lat").focus();
+          return false;
+        }
+        if (isNaN(lng) || lng < -180 || lng > 180) {
+          WebSaude.ui.toast("Informe uma Longitude válida (entre -180 e 180).");
+          document.getElementById("coord-lng").focus();
+          return false;
+        }
+      }
+
+      if (etapaIdx === 3) { // Especialidades
+        if (!especialidades || especialidades.length === 0) {
+          WebSaude.ui.toast("Selecione pelo menos uma especialidade médica.");
+          return false;
+        }
+      }
+
+      if (etapaIdx === 4) { // Horários
+        var is24 = document.getElementById("hor-global-24").checked;
+        var temAtivo = horarios && horarios.some(function (h) { return h.active; });
+        if (!is24 && !temAtivo) {
+          WebSaude.ui.toast("Defina o horário de funcionamento de pelo menos um dia.");
+          return false;
+        }
+      }
+
+      if (etapaIdx === 5) { // Logo
+        if (!perfil || !perfil.url) {
+          WebSaude.ui.toast("O envio da logo do estabelecimento é obrigatório.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function validarTudo() {
+      for (var i = 0; i < STEPS.length; i++) {
+        if (!validarEtapa(i)) {
+          irPara(i);
+          return false;
+        }
+      }
       return true;
     }
 
@@ -752,7 +854,7 @@
     }
 
     function salvar(destino) {
-      if (!validarNome()) return;
+      if (!validarTudo()) return false;
       var dados = lerForm();
       var ativos = dados.horarios.filter(function (h) { return h.active; });
       var is24Global = document.getElementById("hor-global-24").checked || (ativos.length === 7 && ativos.every(function (h) { return h.atende24h; }));
@@ -787,17 +889,14 @@
       Object.assign(unidade, dados);
       if (destino === "pendente") {
         unidade.aprovacao = "Pendente";
-        unidade.status = "Rascunho";
+        unidade.status = "Pendente";
         unidade.dataEnvio = new Date().toLocaleDateString("pt-BR");
         unidade.motivoRejeicao = "";
       } else if (destino === "publicado") {
         unidade.aprovacao = "Aprovado";
         unidade.status = "Publicado";
-      } else if (destino === "manter") {
-        unidade.dataEnvio = unidade.dataEnvio || new Date().toLocaleDateString("pt-BR");
       } else {
-        unidade.aprovacao = "Rascunho";
-        unidade.status = "Rascunho";
+        unidade.dataEnvio = unidade.dataEnvio || new Date().toLocaleDateString("pt-BR");
       }
       WebSaude.persistUnidades();
       return unidade;
@@ -1056,7 +1155,7 @@
 
     document.getElementById("form").addEventListener("submit", function (e) {
       e.preventDefault();
-      if (locked || passo !== STEPS.length - 1) return;
+      if (locked) return;
       if (!salvar("pendente")) return;
       WebSaude.ui.toast("Estabelecimento enviado para aprovação.");
       setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
@@ -1064,15 +1163,10 @@
 
     document.getElementById("acoes").addEventListener("click", function (e) {
       if (e.target.id === "proximo") {
-        if (passo === 0 && !validarNome()) return;
+        if (!validarEtapa(passo)) return;
         irPara(passo + 1);
       }
       if (e.target.id === "voltar") irPara(passo - 1);
-      if (e.target.id === "rascunho") {
-        if (!salvar("rascunho")) return;
-        WebSaude.ui.toast("Rascunho salvo com sucesso.");
-        setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
-      }
       if (e.target.id === "publicar") {
         if (!salvar("publicado")) return;
         WebSaude.ui.toast("Estabelecimento publicado.");
@@ -1082,13 +1176,6 @@
         if (!salvar("manter")) return;
         WebSaude.ui.toast("Alterações salvas com sucesso.");
         setTimeout(function () { location.href = "minhas-unidades.html"; }, 700);
-      }
-      if (e.target.id === "retirar") {
-        unidade.aprovacao = "Rascunho";
-        unidade.status = "Rascunho";
-        WebSaude.persistUnidades();
-        WebSaude.ui.toast("Envio retirado. Agora você pode editar.");
-        location.href = "cadastro-unidade.html?id=" + unidade.id;
       }
     });
   </script>

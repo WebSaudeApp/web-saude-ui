@@ -276,8 +276,8 @@
       Pendente: "Pendentes de aprovação",
       Aprovado: "Unidades publicadas",
       Rejeitado: "Unidades rejeitadas",
-      Rascunho: "Rascunhos"
-    };
+      };
+
     var historico = [
       { at: Date.now() - 8 * 60 * 1000, tipo: "aprovacao", titulo: "Aprovou Hospital Santa Helena", motivo: "" },
       { at: Date.now() - 42 * 60 * 1000, tipo: "desativar", titulo: "Desativou Fernanda Costa", motivo: "Conta duplicada reportada pelo suporte." },
@@ -288,7 +288,7 @@
 
     function situacaoUnidade(u) {
       if (u.aprovacao === "Pendente" || u.aprovacao === "Aprovado" || u.aprovacao === "Rejeitado") return u.aprovacao;
-      return "Rascunho";
+      return "Pendente";
     }
 
     function unidadeFiltro() {
@@ -418,8 +418,7 @@
         { label: "Publicadas", value: nAprov, color: "#0f766e", go: "#unidades", unit: "Aprovado" },
         { label: "Pendentes", value: nPend, color: "#f59e0b", go: "#unidades", unit: "Pendente" },
         { label: "Rejeitadas", value: nRej, color: "#fb7185", go: "#unidades", unit: "Rejeitado" },
-        { label: "Rascunho", value: nRasc, color: "#cbd5e1", go: "#unidades", unit: "Rascunho" }
-      ].filter(function (p) { return p.value > 0; }), "unidades");
+        ].filter(function (p) { return p.value > 0; }), "unidades");
       document.getElementById("chart-status").innerHTML = donut([
         { label: "Ativos", value: ativos, color: "#0f766e", go: "#usuarios", status: "Ativo" },
         { label: "Inativos", value: inativos, color: "#99f6e4", go: "#usuarios", status: "Desativado" }
@@ -524,7 +523,7 @@
       if (s === "Pendente") return '<span class="chip chip-warn">Pendente</span>';
       if (s === "Aprovado") return '<span class="chip chip-ok">Publicada</span>';
       if (s === "Rejeitado") return '<span class="chip chip-muted">Rejeitada</span>';
-      return '<span class="chip chip-muted">Rascunho</span>';
+      return '<span class="chip chip-warn">Pendente</span>';
     }
 
     function vazioUnidades() {
@@ -532,8 +531,7 @@
       if (sit === "Pendente") return "Nenhuma unidade pendente de aprovação.";
       if (sit === "Aprovado") return "Nenhuma unidade publicada neste filtro.";
       if (sit === "Rejeitado") return "Nenhuma unidade rejeitada neste filtro.";
-      if (sit === "Rascunho") return "Nenhum rascunho neste filtro.";
-      return "Nenhuma unidade encontrada.";
+            return "Nenhuma unidade encontrada.";
     }
 
     function linhaUnidade(u) {

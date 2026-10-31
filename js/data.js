@@ -2,7 +2,7 @@ window.WebSaude = window.WebSaude || {};
 
 WebSaude.unidades = [
   { id: 1, nome: "Hospital Santa Helena", tipo: "Hospital geral", cidade: "São Paulo", estado: "SP", endereco: "Rua Vergueiro, 2941 — Vila Mariana", distancia: "1,2 km", nota: 4.8, avaliacoes: 1240, aberto: true, horario: "Aberto 24 horas", foto: "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=800&q=80", convenios: ["Unimed", "Estacionamento", "Acessível PCD"], especialidades: ["Cardiologia", "Ortopedia", "Pediatria", "Neurologia", "Dermatologia", "Clínica Geral"], telefone: "(11) 3456-7890", email: "contato@santahelena.com.br", status: "Publicado", aprovacao: "Aprovado" },
-  { id: 2, nome: "Clínica Viva Bem", tipo: "Clínica médica", cidade: "São Paulo", estado: "SP", endereco: "Av. Paulista, 1420 — Bela Vista", distancia: "2,8 km", nota: 4.6, avaliacoes: 687, aberto: true, horario: "Aberto até 20h", foto: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80", convenios: ["Consultas", "Bradesco Saúde"], especialidades: ["Clínica Geral", "Dermatologia"], telefone: "(11) 3090-1122", email: "contato@vivabem.com.br", status: "Rascunho", aprovacao: "Pendente" },
+  { id: 2, nome: "Clínica Viva Bem", tipo: "Clínica médica", cidade: "São Paulo", estado: "SP", endereco: "Av. Paulista, 1420 — Bela Vista", distancia: "2,8 km", nota: 4.6, avaliacoes: 687, aberto: true, horario: "Aberto até 20h", foto: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80", convenios: ["Consultas", "Bradesco Saúde"], especialidades: ["Clínica Geral", "Dermatologia"], telefone: "(11) 3090-1122", email: "contato@vivabem.com.br", status: "Pendente", aprovacao: "Pendente" },
   { id: 3, nome: "Hospital Saúde+", tipo: "Hospital", cidade: "São Paulo", estado: "SP", endereco: "Rua dos Pinheiros, 890 — Pinheiros", distancia: "4,1 km", nota: 4.4, avaliacoes: 932, aberto: true, horario: "Aberto 24 horas", foto: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80", convenios: ["Emergência", "Caixa Saúde", "Acessível PCD"], especialidades: ["Emergência", "Clínica Geral"], telefone: "(11) 4002-8922", email: "contato@saudemais.com.br", status: "Publicado", aprovacao: "Aprovado" },
   { id: 4, nome: "Hospital São Lucas", tipo: "Hospital", cidade: "São Paulo", estado: "SP", endereco: "Av. Paulista, 500 — Bela Vista", distancia: "3,0 km", nota: 4.7, avaliacoes: 450, aberto: true, horario: "Aberto até 22h", foto: "https://images.unsplash.com/photo-1519494140681-8b17d830a3e9?w=800&q=80", convenios: ["Unimed", "SulAmérica"], especialidades: ["Cardiologia", "Neurologia"], telefone: "(11) 3256-4400", email: "contato@saolucas.com.br", status: "Publicado", aprovacao: "Aprovado" },
   { id: 5, nome: "Clínica Horizonte", tipo: "Clínica", cidade: "São Paulo", estado: "SP", endereco: "Rua Augusta, 300 — Consolação", distancia: "2,1 km", nota: 4.9, avaliacoes: 210, aberto: false, horario: "Abre às 7h", foto: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80", convenios: ["Particular", "Amil"], especialidades: ["Pediatria", "Dermatologia"], telefone: "(11) 3123-7788", email: "contato@horizonte.com.br", status: "Publicado", aprovacao: "Aprovado" },
@@ -11,7 +11,7 @@ WebSaude.unidades = [
   { id: 8, nome: "Clínica Jardim Saúde", tipo: "Clínica médica", cidade: "Rio de Janeiro", estado: "RJ", endereco: "Rua Visconde de Pirajá, 330 — Ipanema", distancia: "1,8 km", nota: 4.3, avaliacoes: 318, aberto: true, horario: "Aberto até 18h", foto: "https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=800&q=80", convenios: ["Bradesco Saúde"], especialidades: ["Clínica Geral"], telefone: "(21) 2522-1010", email: "contato@jardimsaude.com.br", status: "Pendente", aprovacao: "Pendente" },
   { id: 9, nome: "Hospital Belo Horizonte", tipo: "Hospital", cidade: "Belo Horizonte", estado: "MG", endereco: "Av. Afonso Pena, 1500 — Centro", distancia: "2,4 km", nota: 4.2, avaliacoes: 540, aberto: true, horario: "Aberto 24 horas", foto: "https://images.unsplash.com/photo-1551076805-e1869033e561?w=800&q=80", convenios: ["Unimed", "Acessível PCD"], especialidades: ["Emergência", "Cardiologia"], telefone: "(31) 3239-2000", email: "contato@hbh.com.br", status: "Publicado", aprovacao: "Aprovado" },
   { id: 10, nome: "Clínica Brasília Norte", tipo: "Clínica", cidade: "Brasília", estado: "DF", endereco: "SQN 202, Bloco A — Asa Norte", distancia: "3,3 km", nota: 4.6, avaliacoes: 198, aberto: true, horario: "Aberto até 21h", foto: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=80", convenios: ["Caixa Saúde"], especialidades: ["Pediatria"], telefone: "(61) 3321-4400", email: "contato@bsbnorte.com.br", status: "Publicado", aprovacao: "Aprovado" },
-  { id: 11, nome: "Hospital Central", tipo: "Hospital", cidade: "São Paulo", estado: "SP", endereco: "Rua da Consolação, 80 — Centro", distancia: "4,8 km", nota: 4.1, avaliacoes: 870, aberto: true, horario: "Aberto 24 horas", foto: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80", convenios: ["Emergência"], especialidades: ["Emergência"], telefone: "(11) 3222-0900", email: "contato@psc.com.br", status: "Rascunho", aprovacao: "Pendente" },
+  { id: 11, nome: "Hospital Central", tipo: "Hospital", cidade: "São Paulo", estado: "SP", endereco: "Rua da Consolação, 80 — Centro", distancia: "4,8 km", nota: 4.1, avaliacoes: 870, aberto: true, horario: "Aberto 24 horas", foto: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80", convenios: ["Emergência"], especialidades: ["Emergência"], telefone: "(11) 3222-0900", email: "contato@psc.com.br", status: "Pendente", aprovacao: "Pendente" },
   { id: 12, nome: "Instituto Coração Livre", tipo: "Instituto", cidade: "São Paulo", estado: "SP", endereco: "Av. Jabaquara, 2100 — Saúde", distancia: "7,1 km", nota: 4.8, avaliacoes: 276, aberto: true, horario: "Aberto até 17h", foto: "https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=800&q=80", convenios: ["Particular"], especialidades: ["Cardiologia"], telefone: "(11) 5087-3300", email: "contato@coracaolivre.com.br", status: "Publicado", aprovacao: "Aprovado" }
 ];
 
@@ -80,7 +80,7 @@ WebSaude.horariosPadrao = function () {
 
 WebSaude.situacaoUnidade = function (u) {
   if (u.aprovacao === "Pendente" || u.aprovacao === "Aprovado" || u.aprovacao === "Rejeitado") return u.aprovacao;
-  return "Rascunho";
+  return "Pendente";
 };
 
 WebSaude.minhasUnidades = function () {
@@ -179,11 +179,11 @@ WebSaude.persistUnidades = function () {
   };
   var envio = { 2: "12/10/2023", 4: "09/10/2023", 8: "14/10/2023", 11: "18/10/2023" };
   var estados = {
-    2: { status: "Rascunho", aprovacao: "Pendente" },
+    2: { status: "Pendente", aprovacao: "Pendente" },
     6: { status: "Publicado", aprovacao: "Aprovado" },
-    8: { status: "Rascunho", aprovacao: "Pendente" },
-    11: { status: "Rascunho", aprovacao: "Rejeitado", motivoRejeicao: "CNPJ e endereço não conferem com o cadastro." },
-    12: { status: "Rascunho", aprovacao: "Rascunho" }
+    8: { status: "Pendente", aprovacao: "Pendente" },
+    11: { status: "Rejeitado", aprovacao: "Rejeitado", motivoRejeicao: "CNPJ e endereço não conferem com o cadastro." },
+    12: { status: "Pendente", aprovacao: "Pendente" }
   };
   WebSaude.unidades.forEach(function (u) {
     u.gestor = donos[u.id] || "Gestor responsável";
