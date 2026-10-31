@@ -37,26 +37,31 @@
   }
 
   function logoSvg() {
-    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8M12 8v8" stroke-linecap="round"/><circle cx="15.2" cy="15.2" r="1.1" fill="#fff" stroke="none"/><circle cx="18.4" cy="13.2" r="1.1" fill="#fff" stroke="none"/><circle cx="16.8" cy="18.2" r="1.1" fill="#fff" stroke="none"/><path d="M15.2 15.2l3.2-2M15.2 15.2l1.6 3"/></svg>';
+    return '<img src="img/logo.png" alt="Web Saúde" class="brand-logo-img">';
   }
 
-  function brand(href) {
-    return '<a class="brand" href="' + (href || "index.html") + '"><span class="brand-mark">' + logoSvg() + '</span><span>Web Saúde</span></a>';
+  function brand(href, variant) {
+    var src = (variant === "teal") ? "img/logo-teal.png" : "img/logo.png";
+    return '<a class="brand" href="' + (href || "index.html") + '"><img src="' + src + '" alt="Web Saúde" class="brand-logo-img"></a>';
   }
 
   function header(active, mode) {
     const links = [["index.html", "Início"]];
     if (mode === "gestor") links.push(["minhas-unidades.html", "Meus estabelecimentos"]);
-    let extra = '<a class="btn btn-ghost" href="login.html">Entrar</a>';
-    if (mode === "user") extra = '<a class="btn btn-ghost" href="perfil.html">Maria Silva</a>';
-    if (mode === "gestor") extra = '<a class="btn btn-ghost" href="minhas-unidades.html">Dra. Maria Silva</a>';
-    if (mode === "admin") extra = '<span class="chip">Administrador</span><a class="btn btn-ghost" href="admin.html" aria-current="page">Painel</a>';
+    let accountHref = "login.html";
+    let accountLabel = "Entrar";
+    if (mode === "user") { accountHref = "perfil.html"; accountLabel = "Maria Silva"; }
+    if (mode === "gestor") { accountHref = "minhas-unidades.html"; accountLabel = "Dra. Maria Silva"; }
+    if (mode === "admin") { accountHref = "admin.html"; accountLabel = "Painel"; }
+    let extra = '<a class="btn btn-ghost" href="' + accountHref + '">' + accountLabel + "</a>";
+    if (mode === "admin") extra = '<span class="chip">Administrador</span>' + extra;
     return (
       '<header class="header"><div class="header-inner">' +
       brand("index.html") +
       '<nav class="nav">' +
       '<div class="nav-links" id="nav-links">' +
       links.map(([h, l]) => '<a href="' + h + '"' + (active === l ? ' class="is-active"' : "") + ">" + l + "</a>").join("") +
+      '<a href="' + accountHref + '"' + (active === accountLabel ? ' class="is-active"' : "") + ">" + accountLabel + "</a>" +
       "</div>" +
       '<div class="nav-actions">' + extra + "</div>" +
       '<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">' +
@@ -176,6 +181,7 @@
     if (!root) return;
     const PAGE = opts.perPage || 5;
     let shown = PAGE;
+    let painted = 0;
     let observer = null;
     const sentinel = document.createElement(opts.sentinel || "div");
     sentinel.className = "infinite-sentinel";
@@ -191,6 +197,7 @@
     function scroller() {
       var el = null;
       if (opts.root === "self") el = root;
+      else if (opts.root === "viewport") return null;
       else if (typeof opts.root === "string") el = document.querySelector(opts.root);
       else el = opts.root || null;
       if (!el) return null;
@@ -214,19 +221,37 @@
     }
 
     function draw(reset) {
-      if (reset) shown = PAGE;
+      if (reset) {
+        shown = PAGE;
+        painted = 0;
+        if (observer) {
+          observer.disconnect();
+          observer = null;
+        }
+      }
       const all = allItems();
       const slice = all.slice(0, shown);
       const hasMore = shown < all.length;
-      const box = scroller() || root;
-      const top = box.scrollTop;
+      const box = scroller();
+      const top = box ? box.scrollTop : window.scrollY;
       if (!slice.length) {
         root.innerHTML = (typeof opts.empty === "function" ? opts.empty() : opts.empty) || '<p class="center-note">Nenhum item.</p>';
-      } else {
+        painted = 0;
+      } else if (!painted) {
         root.innerHTML = slice.map(opts.render).join("");
+        painted = slice.length;
         if (hasMore) root.appendChild(sentinel);
+      } else {
+        slice.slice(painted).forEach(function (item) {
+          var html = opts.render(item);
+          if (sentinel.parentNode) sentinel.insertAdjacentHTML("beforebegin", html);
+          else root.insertAdjacentHTML("beforeend", html);
+        });
+        painted = slice.length;
+        if (hasMore && !sentinel.parentNode) root.appendChild(sentinel);
+        if (!hasMore && sentinel.parentNode) sentinel.remove();
       }
-      box.scrollTop = top;
+      if (box) box.scrollTop = top;
       if (opts.onMeta) opts.onMeta(slice.length, all.length, hasMore);
       if (opts.bind) opts.bind(root);
       watch(hasMore);
@@ -242,6 +267,12 @@
       const open = document.querySelector(".nav").classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", open);
       return;
+    }
+    const nav = document.querySelector(".nav");
+    if (nav && nav.classList.contains("is-open") && !e.target.closest(".nav")) {
+      nav.classList.remove("is-open");
+      const toggleBtn = document.querySelector(".nav-toggle");
+      if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "false");
     }
     const tab =e.target.closest("[data-tab]");
     if (!tab) return;
@@ -263,14 +294,23 @@
       '<button class="msel-btn" type="button" aria-expanded="false" aria-haspopup="listbox">' +
       '<span class="msel-label">' + (opts.empty || "Todas") + "</span></button>" +
       '<div class="msel-panel" hidden>' +
+      '<p class="msel-title">Especialidades</p>' +
       '<input class="input" type="search" placeholder="' + (opts.search || "Buscar especialidade") + '" autocomplete="off">' +
       '<div class="msel-list">' + items.map(function (s) {
         return '<label class="check" data-esp="' + s.replace(/"/g, "&quot;") + '"><input type="checkbox" value="' + s.replace(/"/g, "&quot;") + '"> ' + s + "</label>";
-      }).join("") + "</div></div>";
+      }).join("") + "</div>" +
+      '<button class="btn btn-primary msel-done" type="button">Pronto</button></div>';
     var btn = el.querySelector(".msel-btn");
     var panel = el.querySelector(".msel-panel");
     var search = el.querySelector("input[type=search]");
     var label = el.querySelector(".msel-label");
+    var back = document.querySelector(".msel-back");
+    if (!back) {
+      back = document.createElement("div");
+      back.className = "msel-back";
+      back.hidden = true;
+      document.body.appendChild(back);
+    }
     function syncLabel() {
       if (!selected.length) label.textContent = opts.empty || "Todas";
       else if (selected.length === 1) label.textContent = selected[0];
@@ -278,6 +318,8 @@
     }
     function setOpen(on) {
       panel.hidden = !on;
+      back.hidden = !on;
+      document.body.classList.toggle("msel-open", on);
       btn.setAttribute("aria-expanded", on ? "true" : "false");
       if (on) search.focus();
     }
@@ -307,8 +349,10 @@
         if (opts.onChange) opts.onChange(selected.slice());
       });
     });
+    el.querySelector(".msel-done").addEventListener("click", function () { setOpen(false); });
+    back.addEventListener("click", function () { setOpen(false); });
     document.addEventListener("click", function (e) {
-      if (!el.contains(e.target)) setOpen(false);
+      if (!el.contains(e.target) && e.target !== back) setOpen(false);
     });
     return {
       values: function () { return selected.slice(); },
